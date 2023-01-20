@@ -81,3 +81,7 @@ func CheckExecFile() {
 		panic("当前目录不存在 Fastbuilder")
 	}
 }
+
+func GetOmegaStorageDir() string {
+	return path.Join(utils.GetCurrentDir(), "omega_storage")
+}

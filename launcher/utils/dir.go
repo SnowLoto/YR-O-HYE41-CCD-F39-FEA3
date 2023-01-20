@@ -36,18 +36,6 @@ func GetCurrentDataDir() string {
 	return GetCurrentDir()
 }
 
-/*
-// From PhoenixBuilder\omega\mainframe\bootstrap.go:227
-
-o.storageRoot = "omega_storage"
-// android
-if utils.IsDir("/sdcard/Download/omega_storage") {
-	o.storageRoot = "/sdcard/Download/omega_storage"
-} else {
-	if utils.IsDir("/sdcard") {
-		if err := utils.MakeDirP("/sdcard/Download/omega_storage"); err == nil {
-			o.storageRoot = "/sdcard/Download/omega_storage"
-		}
-	}
+func IsDocker() bool {
+	return IsFile(path.Join("/ome", "launcher_liliya"))
 }
-*/

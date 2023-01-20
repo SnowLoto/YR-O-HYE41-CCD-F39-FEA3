@@ -20,6 +20,7 @@ require (
 	github.com/andybalholm/brotli v1.0.4
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/containerd/console v1.0.3 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/gookit/color v1.5.2 // indirect
 	github.com/lithammer/fuzzysearch v1.1.5 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
