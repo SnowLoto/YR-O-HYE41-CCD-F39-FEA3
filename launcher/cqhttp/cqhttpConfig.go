@@ -9,10 +9,15 @@ import (
 	"strings"
 	"syscall"
 
+	_ "embed"
+
 	"github.com/pterm/pterm"
 	"golang.org/x/term"
 	v2 "gopkg.in/yaml.v2"
 )
+
+//go:embed assets/config.yml
+var defaultConfigBytes []byte
 
 // 从cqhttp配置里读取QQ账密信息
 func getCQConfig(cqCfg string) *defines.CQHttpConfig {

@@ -41,8 +41,8 @@ func main() {
 			} else {
 				fastbuilder.CheckExecFile()
 			}
-			// 群服互通
-			if launcherConfig.QGroupLinkEnable && launcherConfig.StartOmega {
+			// go-cqhttp
+			if launcherConfig.EnableCQHttp && launcherConfig.StartOmega {
 				cqhttp.Run(launcherConfig)
 			}
 			// 启动Omega或者FB
@@ -52,11 +52,11 @@ func main() {
 	}
 	// 配置FB更新
 	pterm.Info.Printf("需要启动器帮忙下载或更新 Fastbuilder 吗? 要请输入 y, 不要请输入 n: ")
-	launcherConfig.UpdateFB = false
 	if utils.GetInputYN() {
-		fastbuilder.Update(launcherConfig, true)
 		launcherConfig.UpdateFB = true
+		fastbuilder.Update(launcherConfig, true)
 	} else {
+		launcherConfig.UpdateFB = false
 		fastbuilder.CheckExecFile()
 	}
 	// 配置FB
@@ -72,31 +72,35 @@ func main() {
 	}
 	// 询问是否使用Omega
 	pterm.Info.Printf("要启动 Omega 还是 Fastbuilder? 启动 Omega 请输入 y, 启动 Fastbuilder 请输入 n: ")
-	launcherConfig.StartOmega = false
 	if utils.GetInputYN() {
 		launcherConfig.StartOmega = true
 		// 配置群服互通
-		pterm.Info.Printf("需要启动器帮忙配置群服互通吗? 要请输入 y, 不要请输入 n: ")
-		launcherConfig.QGroupLinkEnable = false
+		pterm.Info.Printf("需要启动 go-cqhttp 吗? 要请输入 y, 不要请输入 n: ")
 		if utils.GetInputYN() {
-			launcherConfig.QGroupLinkEnable = true
+			launcherConfig.EnableCQHttp = true
 			pterm.Info.Printf("需要在配置完成后屏蔽 go-cqhttp 的输出吗? 要请输入 y, 不要请输入 n: ")
-			launcherConfig.BlockCQHttpOutput = false
 			if utils.GetInputYN() {
 				launcherConfig.BlockCQHttpOutput = true
+			} else {
+				launcherConfig.BlockCQHttpOutput = false
 			}
 			if !utils.IsDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置")) {
-				pterm.Warning.Printf("首次启动时配置群服互通会导致新生成的组件均为非启用状态, 要继续吗? 要请输入 y, 不要请输入 n: ")
+				pterm.Warning.Printf("首次使用时链接 go-cqhttp 会导致新生成的组件均为非启用状态, 要继续吗? 要请输入 y, 不要请输入 n: ")
 				if utils.GetInputYN() {
-					utils.MkDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置", "群服互通"))
-					cqhttp.CQHttpEnablerHelper(launcherConfig)
+					cqhttp.CQHttpEnablerHelper()
+					cqhttp.Run(launcherConfig)
 				} else {
-					launcherConfig.QGroupLinkEnable = false
+					launcherConfig.EnableCQHttp = false
 				}
 			} else {
-				cqhttp.CQHttpEnablerHelper(launcherConfig)
+				cqhttp.CQHttpEnablerHelper()
+				cqhttp.Run(launcherConfig)
 			}
+		} else {
+			launcherConfig.EnableCQHttp = false
 		}
+	} else {
+		launcherConfig.StartOmega = false
 	}
 	// 启动Omega或者FB
 	fastbuilder.Run(launcherConfig)

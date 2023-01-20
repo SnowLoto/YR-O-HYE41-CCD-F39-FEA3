@@ -53,7 +53,7 @@ func Run(cfg *defines.LauncherConfig) {
 	// 打印警告信息, Windows新版终端存在此问题，暂时没找到解决方法（
 	plantform := embed_binary.GetPlantform()
 	if plantform == embed_binary.WINDOWS_arm64 || plantform == embed_binary.WINDOWS_x86_64 {
-		pterm.Warning.Println("对于Windows新版终端, 直接点击关闭按钮会导致程序在后台持续运行")
+		pterm.Warning.Println("对于 Windows 新版终端, 直接点击关闭按钮会导致程序在后台持续运行")
 	}
 	// 配置启动参数
 	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
