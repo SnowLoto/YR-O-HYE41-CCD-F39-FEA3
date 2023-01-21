@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/fs"
 	"omega_launcher/defines"
+	"omega_launcher/fastbuilder"
 	"omega_launcher/utils"
 	"path"
 	"path/filepath"
@@ -21,9 +22,9 @@ func getOmegaQGroupLinkConfig() (string, *defines.QGroupLinkComponentConfig) {
 	// 默认的空配置
 	cfg := &defines.QGroupLinkComponentConfig{}
 	// 默认配置文件路径
-	fp := path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置", "群服互通", "组件-群服互通.json")
+	fp := path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json")
 	// 尝试从配置文件夹下寻找全部群服互通配置文件
-	if err := filepath.Walk(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置"), func(filePath string, info fs.FileInfo, err error) error {
+	if err := filepath.Walk(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"), func(filePath string, info fs.FileInfo, err error) error {
 		// 跳过目录
 		if info.IsDir() {
 			return nil
@@ -67,9 +68,9 @@ func getOmegaQGuildLinkConfig() (string, *defines.QGuildLinkComponentConfig) {
 	// 默认的空配置
 	cfg := &defines.QGuildLinkComponentConfig{}
 	// 默认配置文件路径
-	fp := path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置", "第三方", "Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")
+	fp := path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")
 	// 尝试从配置文件夹下寻找全部频服互通配置文件
-	if err := filepath.Walk(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置"), func(filePath string, info fs.FileInfo, err error) error {
+	if err := filepath.Walk(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"), func(filePath string, info fs.FileInfo, err error) error {
 		// 跳过目录
 		if info.IsDir() {
 			return nil
