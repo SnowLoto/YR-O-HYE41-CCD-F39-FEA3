@@ -63,7 +63,7 @@ func main() {
 	fastbuilder.FBTokenSetup(launcherConfig)
 	// 配置租赁服登录
 	if launcherConfig.RentalCode != "" {
-		pterm.Info.Printf("要使用上次的租赁服配置吗? 要请输入 y, 不要请输入 n: ")
+		pterm.Info.Printf("要使用上次 %s 的租赁服配置吗? 要请输入 y, 不要请输入 n: ", launcherConfig.RentalCode)
 		if !utils.GetInputYN() {
 			fastbuilder.RentalServerSetup(launcherConfig)
 		}
@@ -84,8 +84,8 @@ func main() {
 			} else {
 				launcherConfig.BlockCQHttpOutput = false
 			}
-			if !utils.IsDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置")) {
-				pterm.Warning.Printf("首次使用时链接 go-cqhttp 会导致新生成的组件均为非启用状态, 要继续吗? 要请输入 y, 不要请输入 n: ")
+			if !utils.IsDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置")) {
+				pterm.Warning.Printf("此时配置 go-cqhttp 会导致新生成的组件均为非启用状态, 要继续吗? 要请输入 y, 不要请输入 n: ")
 				if utils.GetInputYN() {
 					cqhttp.CQHttpEnablerHelper()
 					cqhttp.Run(launcherConfig)
