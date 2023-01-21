@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"omega_launcher/defines"
+	"omega_launcher/fastbuilder"
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
@@ -15,30 +16,19 @@ import (
 
 func CQHttpEnablerHelper() {
 	// 无法创建目录则退出
-	if !utils.MkDir(path.Join(utils.GetCurrentDir(), "cqhttp_storage")) {
+	if !utils.MkDir(GetCQHttpDir()) {
 		panic("无法创建 cqhttp_storage 目录")
 	}
-	// 提示与确认
-	pterm.Info.Print("现在你可以进行文件上传的操作了, 输入 y 继续配置 go-cqhttp: ")
-	utils.GetInputYN()
 	// 导入配置
 	UnPackCQHttpRunAuth()
-	// 配置文件路径
-	cqCfgFp := path.Join(utils.GetCurrentDir(), "cqhttp_storage", "config.yml")
 	// 如果go-cqhttp配置文件不存在, 则执行初始化操作
-	if utils.IsFile(cqCfgFp) {
+	if cqCfg := getCQConfig(); cqCfg != nil {
 		pterm.Info.Print("已读取到 go-cqhttp 配置文件, 要使用吗? 使用请输入 y, 需要重新设置请输入 n: ")
 		if utils.GetInputYN() {
-			// 在使用上次的配置时，将读取cqhttp配置文件的账密，然后对cqhttp配置文件进行更新
-			if re := getCQConfig(cqCfgFp); re != nil {
-				updateCQConfig(re, "null")
-			}
-		} else {
-			cqhttpInit()
+			return
 		}
-	} else {
-		cqhttpInit()
 	}
+	initCQConfig()
 }
 
 func Run(botCfg *defines.LauncherConfig) {
@@ -54,7 +44,7 @@ func Run(botCfg *defines.LauncherConfig) {
 		}
 	}
 	// 读取Omega配置
-	utils.MkDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置"))
+	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
 	qGroupLinkFp, qGroupLinkCfg := getOmegaQGroupLinkConfig()
 	qGuildLinkFp, qGuildLinkCfg := getOmegaQGuildLinkConfig()
 	// 检查群服互通配置文件的地址是否可用
@@ -66,14 +56,14 @@ func Run(botCfg *defines.LauncherConfig) {
 		}
 		qGroupLinkCfg.Configs.Address = fmt.Sprintf("127.0.0.1:%d", port)
 	}
-	utils.MkDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置", "群服互通"))
+	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通"))
 	updateOmegaConfig(qGroupLinkFp, qGroupLinkCfg)
 	// 频服互通直接使用群服互通的地址
 	qGuildLinkCfg.Configs.Address = qGroupLinkCfg.Configs.Address
-	utils.MkDir(path.Join(utils.GetCurrentDataDir(), "omega_storage", "配置", "第三方", "Liliya233", "频服互通"))
+	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通"))
 	updateOmegaConfig(qGuildLinkFp, qGuildLinkCfg)
 	// 启动前, 将Omega配置内的IP地址同步到go-cqhttp配置文件
-	updateCQConfig(getCQConfig(path.Join(GetCQHttpDir(), "config.yml")), qGroupLinkCfg.Configs.Address)
+	updateCQConfigAddress(qGroupLinkCfg.Configs.Address)
 	// 配置启动参数
 	args := []string{"-faststart"}
 	// 配置执行目录
@@ -124,10 +114,10 @@ func Run(botCfg *defines.LauncherConfig) {
 	// 打包data文件
 	PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp)
 	// 打印提示消息
-	pterm.Success.Println("go-cqhttp 已经启动成功了, 可前往 omega_storage 文件夹对相关组件进行进一步配置")
+	pterm.Success.Println("go-cqhttp 已配置完成, 建议根据自身情况来修改互通组件")
 	pterm.Info.Println("若要为服务器配置 go-cqhttp, 请执行以下的操作：")
-	pterm.Info.Println("1. 在服务器使用启动器配置 go-cqhttp, 直至启动器要求进行文件上传操作")
+	pterm.Info.Println("1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录")
 	pterm.Info.Println("2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下")
-	pterm.Info.Println("3. 在服务器上进行确认, 此时应该配置成功了")
+	pterm.Info.Println("3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了")
 	pterm.Info.Println("如果遇到 go-cqhttp 相关的问题, 可前往 https://docs.go-cqhttp.org/ 寻找可用信息")
 }
