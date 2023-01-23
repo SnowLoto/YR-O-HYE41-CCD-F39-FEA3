@@ -45,25 +45,15 @@ func Run(botCfg *defines.LauncherConfig) {
 	}
 	// 读取Omega配置
 	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
-	qGroupLinkFp, qGroupLinkCfg := getOmegaQGroupLinkConfig()
-	qGuildLinkFp, qGuildLinkCfg := getOmegaQGuildLinkConfig()
-	// 检查群服互通配置文件的地址是否可用
-	if qGroupLinkCfg.Configs.Address == "" || !utils.IsAddressAvailable(qGroupLinkCfg.Configs.Address) {
-		port, err := utils.GetAvailablePort()
-		if err != nil {
-			pterm.Error.Println("无法为 go-cqhttp 获取可用端口")
-			panic(err)
-		}
-		qGroupLinkCfg.Configs.Address = fmt.Sprintf("127.0.0.1:%d", port)
+	// 配置地址同步
+	port, err := utils.GetAvailablePort()
+	if err != nil {
+		pterm.Error.Println("无法为 go-cqhttp 获取可用端口")
+		panic(err)
 	}
-	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通"))
-	updateOmegaConfig(qGroupLinkFp, qGroupLinkCfg)
-	// 频服互通直接使用群服互通的地址
-	qGuildLinkCfg.Configs.Address = qGroupLinkCfg.Configs.Address
-	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通"))
-	updateOmegaConfig(qGuildLinkFp, qGuildLinkCfg)
-	// 启动前, 将Omega配置内的IP地址同步到go-cqhttp配置文件
-	updateCQConfigAddress(qGroupLinkCfg.Configs.Address)
+	availableAddress := fmt.Sprintf("127.0.0.1:%d", port)
+	qGroupCfgFp, qGuildCfgFp := updateOmegaConfigAddress(availableAddress)
+	updateCQConfigAddress(availableAddress)
 	// 配置启动参数
 	args := []string{"-faststart"}
 	// 配置执行目录
@@ -105,14 +95,14 @@ func Run(botCfg *defines.LauncherConfig) {
 		}
 	}()
 	// 等待cqhttp启动完成
-	WaitConnect(qGroupLinkCfg.Configs.Address)
+	WaitConnect(availableAddress)
 	// 配置完成后, 根据设置决定是否关闭go-cqhttp输出
 	if botCfg.BlockCQHttpOutput {
 		pterm.Warning.Println("将屏蔽 go-cqhttp 的输出内容")
 		stopOutput = true
 	}
 	// 打包data文件
-	PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp)
+	PackCQHttpRunAuth(qGroupCfgFp, qGuildCfgFp)
 	// 打印提示消息
 	pterm.Success.Println("go-cqhttp 已配置完成, 建议根据自身情况来修改互通组件")
 	pterm.Info.Println("若要为服务器配置 go-cqhttp, 请执行以下的操作：")

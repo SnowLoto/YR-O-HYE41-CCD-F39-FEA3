@@ -1,5 +1,15 @@
 package defines
 
+// Omega 配置文件结构
+type OmegaComponentConfig struct {
+	Name        string         `json:"名称"`
+	Description string         `json:"描述"`
+	Disabled    bool           `json:"是否禁用"`
+	Version     string         `json:"版本"`
+	Source      string         `json:"来源"`
+	Configs     map[string]any `json:"配置"`
+}
+
 // Omega 群服互通配置文件结构
 type QGroupLink struct {
 	Address                   string                        `json:"CQHTTP正向Websocket代理地址"`
@@ -20,15 +30,6 @@ type QGroupLink struct {
 	ShowExchangeDetail        bool                          `json:"在控制台显示消息转发详情"`
 }
 
-type QGroupLinkComponentConfig struct {
-	Name        string      `json:"名称"`
-	Description string      `json:"描述"`
-	Disabled    bool        `json:"是否禁用"`
-	Version     string      `json:"版本"`
-	Source      string      `json:"来源"`
-	Configs     *QGroupLink `json:"配置"`
-}
-
 // Omega 频服互通配置文件结构
 type QGuildLink struct {
 	ChatOnly            bool                `json:"只转发聊天消息"`
@@ -45,13 +46,4 @@ type QGuildLink struct {
 	PublicCmds          []string            `json:"允许所有频道成员使用这些指令"`
 	CmdExecutor         []string            `json:"允许这些身份组的频道成员透过QQ执行指令"`
 	LinkChannelNames    map[string][]string `json:"链接的子频道"`
-}
-
-type QGuildLinkComponentConfig struct {
-	Name        string      `json:"名称"`
-	Description string      `json:"描述"`
-	Disabled    bool        `json:"是否禁用"`
-	Version     string      `json:"版本"`
-	Source      string      `json:"来源"`
-	Configs     *QGuildLink `json:"配置"`
 }

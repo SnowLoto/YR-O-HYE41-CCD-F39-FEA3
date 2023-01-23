@@ -121,7 +121,7 @@ func UnPackCQHttpRunAuth() {
 				}
 			}
 		}
-		pterm.Info.Print("已读取到 .data 文件，要导入吗? 要请输入 y, 不要请输入 n: ")
+		pterm.Info.Print("已读取到 data 文件，要导入吗? 要请输入 y, 不要请输入 n: ")
 		accept := utils.GetInputYN()
 		if accept {
 			os.RemoveAll(GetCQHttpDir())
