@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 	"omega_launcher/defines"
-	"omega_launcher/embed_binary"
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path"
 	"strings"
 	"syscall"
@@ -50,11 +50,6 @@ func RentalServerSetup(cfg *defines.LauncherConfig) {
 }
 
 func Run(cfg *defines.LauncherConfig) {
-	// 打印警告信息, Windows新版终端存在此问题，暂时没找到解决方法（
-	plantform := embed_binary.GetPlantform()
-	if plantform == embed_binary.WINDOWS_arm64 || plantform == embed_binary.WINDOWS_x86_64 {
-		pterm.Warning.Println("对于 Windows 新版终端, 直接点击关闭按钮会导致程序在后台持续运行")
-	}
 	// 配置启动参数
 	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
@@ -92,6 +87,11 @@ func Run(cfg *defines.LauncherConfig) {
 	}()
 	// 重启间隔
 	restartTime := 0
+	// 监听程序退出信号
+	exitSignal := make(chan os.Signal)
+	signal.Notify(exitSignal, os.Interrupt)
+	signal.Notify(exitSignal, syscall.SIGTERM)
+	signal.Notify(exitSignal, syscall.SIGQUIT)
 	for {
 		// 记录启动时间
 		startTime := time.Now()
@@ -143,6 +143,9 @@ func Run(cfg *defines.LauncherConfig) {
 				select {
 				case <-stop:
 					return
+				case <-exitSignal:
+					// 强制退出
+					os.Exit(1)
 				case s := <-readC:
 					lastInput = s
 					// 接收到停止命令时处理
