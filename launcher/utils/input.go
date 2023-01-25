@@ -6,9 +6,20 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/pterm/pterm"
+	"golang.org/x/term"
 )
+
+// CONF, 与 INFO 相似的样式
+var ConfPrinter = pterm.PrefixPrinter{
+	MessageStyle: &pterm.ThemeDefault.InfoMessageStyle,
+	Prefix: pterm.Prefix{
+		Style: &pterm.ThemeDefault.InfoPrefixStyle,
+		Text:  "CONF",
+	},
+}
 
 func GetInput() string {
 	buf := bufio.NewReader(os.Stdin)
@@ -16,39 +27,48 @@ func GetInput() string {
 	return string(strings.TrimSpace(string(l)))
 }
 
-func GetValidInput() string {
+func GetValidInput(text string) string {
 	for {
-		s := GetInput()
-		if s == "" {
-			pterm.Error.Println("无效输入，输入不能为空")
+		result, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show(ConfPrinter.Sprint(text))
+		if result == "" {
+			pterm.Error.Print("无效输入，输入不能为空")
 			continue
 		}
-		return s
+		return result
 	}
 }
 
-func GetInputYN() bool {
-	for {
-		s := GetInput()
-		if strings.HasPrefix(s, "y") || strings.HasPrefix(s, "Y") || s == "" {
-			return true
-		} else if strings.HasPrefix(s, "n") || strings.HasPrefix(s, "N") {
-			return false
-		}
-		pterm.Error.Println("无效输入，输入应该为 y 或者 n")
+func GetPswInput(text string) string {
+	ConfPrinter.Printf(text + " (不会回显): ")
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	fmt.Print("\n")
+	if err != nil {
+		panic(err)
 	}
+	return string(bytePassword)
 }
 
-func GetIntInputInScope(a, b int) int {
+func GetInputYN(text string) bool {
+	confirm := pterm.DefaultInteractiveConfirm
+	// 设置默认值为 Y
+	confirm.DefaultValue = true
+	// 修改待选项为黄色
+	confirm.SuffixStyle = &pterm.Style{pterm.FgYellow}
+	// 显示并返回用户输入
+	result, _ := confirm.Show(ConfPrinter.Sprint(text))
+	return result
+}
+
+func GetIntInputInScope(text string, a, b int) int {
 	for {
-		s := GetInput()
+		s := GetValidInput(text)
 		num, err := strconv.Atoi(s)
 		if err != nil {
-			pterm.Error.Println("无效输入，请重新输入")
+			pterm.Error.Print("只能输入数字，请重新输入")
 			continue
 		}
 		if num < a || num > b {
-			pterm.Error.Println(fmt.Sprintf("只能输入%d到%d之间的整数，请重新输入", a, b))
+			pterm.Error.Printf("只能输入%d到%d之间的整数，请重新输入", a, b)
 			continue
 		}
 		return num

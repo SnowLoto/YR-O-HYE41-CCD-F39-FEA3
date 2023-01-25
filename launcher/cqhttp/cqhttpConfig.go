@@ -1,18 +1,15 @@
 package cqhttp
 
 import (
-	"fmt"
 	"omega_launcher/defines"
 	"omega_launcher/utils"
 	"os"
 	"path"
 	"strings"
-	"syscall"
 
 	_ "embed"
 
 	"github.com/pterm/pterm"
-	"golang.org/x/term"
 	v2 "gopkg.in/yaml.v2"
 )
 
@@ -66,15 +63,8 @@ func initCQConfig() {
 		panic("非本地环境只能通过上传文件的方式来配置 go-cqhttp")
 	}
 	// 要求输入cqhttp配置信息
-	pterm.Info.Printf("请输入QQ账号: ")
-	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", utils.GetValidInput(), 1)
-	pterm.Info.Printf("请输入QQ密码 (不会回显): ")
-	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	fmt.Print("\n")
-	if err != nil {
-		panic(err)
-	}
-	cfgStr = strings.Replace(cfgStr, "[QQ密码]", string(bytePassword), 1)
+	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", utils.GetValidInput("请输入QQ账号"), 1)
+	cfgStr = strings.Replace(cfgStr, "[QQ密码]", utils.GetPswInput("请输入QQ密码"), 1)
 	cfgStr = strings.Replace(cfgStr, "[地址]", "null", 1)
 	// 写入新配置
 	writeCQConfig(cfgStr)

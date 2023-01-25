@@ -121,9 +121,7 @@ func UnPackCQHttpRunAuth() {
 				}
 			}
 		}
-		pterm.Info.Print("已读取到 data 文件，要导入吗? 要请输入 y, 不要请输入 n: ")
-		accept := utils.GetInputYN()
-		if accept {
+		if utils.GetInputYN("已读取到 data 文件，要导入吗?") {
 			os.RemoveAll(GetCQHttpDir())
 			zipData, err := io.ReadAll(fp)
 			if err != nil {

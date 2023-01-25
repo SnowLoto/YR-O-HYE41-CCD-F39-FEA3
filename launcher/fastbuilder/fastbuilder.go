@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/pterm/pterm"
-	"golang.org/x/term"
 )
 
 // 保存配置文件
@@ -28,8 +27,7 @@ func saveConfig(cfg *defines.LauncherConfig) {
 // 配置Token
 func FBTokenSetup(cfg *defines.LauncherConfig) {
 	if cfg.FBToken != "" {
-		pterm.Info.Printf("要使用上次的 Fastbuilder 账号登录吗? 要请输入 y, 需要修改请输入 n: ")
-		if utils.GetInputYN() {
+		if utils.GetInputYN("要使用上次的 Fastbuilder 账号登录吗?") {
 			return
 		}
 	}
@@ -38,15 +36,8 @@ func FBTokenSetup(cfg *defines.LauncherConfig) {
 
 // 配置租赁服信息
 func RentalServerSetup(cfg *defines.LauncherConfig) {
-	pterm.Info.Printf("请输入租赁服号: ")
-	cfg.RentalCode = utils.GetValidInput()
-	pterm.Info.Printf("请输入租赁服密码 (没有则留空, 不会回显): ")
-	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	fmt.Print("\n")
-	if err != nil {
-		panic(err)
-	}
-	cfg.RentalPasswd = string(bytePassword)
+	cfg.RentalCode = utils.GetValidInput("请输入租赁服号")
+	cfg.RentalPasswd = utils.GetPswInput("请输入租赁服密码")
 }
 
 func Run(cfg *defines.LauncherConfig) {

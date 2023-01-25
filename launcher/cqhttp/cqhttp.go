@@ -23,8 +23,7 @@ func CQHttpEnablerHelper() {
 	UnPackCQHttpRunAuth()
 	// 如果go-cqhttp配置文件不存在, 则执行初始化操作
 	if cqCfg := getCQConfig(); cqCfg != nil {
-		pterm.Info.Print("已读取到 go-cqhttp 配置文件, 要使用吗? 使用请输入 y, 需要重新设置请输入 n: ")
-		if utils.GetInputYN() {
+		if utils.GetInputYN("已读取到 go-cqhttp 配置文件, 要使用吗?") {
 			return
 		}
 	}
@@ -104,10 +103,11 @@ func Run(botCfg *defines.LauncherConfig) {
 	// 打包data文件
 	PackCQHttpRunAuth(qGroupCfgFp, qGuildCfgFp)
 	// 打印提示消息
-	pterm.Success.Println("go-cqhttp 已配置完成, 建议根据自身情况来修改互通组件")
-	pterm.Info.Println("若要为服务器配置 go-cqhttp, 请执行以下的操作：")
-	pterm.Info.Println("1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录")
-	pterm.Info.Println("2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下")
-	pterm.Info.Println("3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了")
-	pterm.Info.Println("如果遇到 go-cqhttp 相关的问题, 可前往 https://docs.go-cqhttp.org/ 寻找可用信息")
+	pterm.Info.Println(
+		" 若要为服务器配置 go-cqhttp, 请执行以下的操作：\n",
+		"1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录\n",
+		"2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下\n",
+		"3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了\n",
+		"如果遇到 go-cqhttp 相关的问题, 可前往 https://docs.go-cqhttp.org/ 寻找可用信息",
+	)
 }
