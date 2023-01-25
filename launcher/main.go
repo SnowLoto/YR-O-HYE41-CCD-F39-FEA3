@@ -2,8 +2,10 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"omega_launcher/cqhttp"
 	"omega_launcher/defines"
+	"omega_launcher/embed_binary"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/utils"
 	"os"
@@ -15,14 +17,27 @@ import (
 //go:embed VERSION
 var version []byte
 
+func beforeClose() {
+	// 打印错误
+	err := recover()
+	if err != nil {
+		pterm.Fatal.WithFatal(false).Println(err)
+	}
+	// Make Windows users happy
+	if p := embed_binary.GetPlantform(); p == embed_binary.WINDOWS_x86_64 || p == embed_binary.WINDOWS_arm64 {
+		fmt.Println("按下回车键退出程序...")
+		fmt.Scanln()
+	}
+}
+
 func main() {
+	defer beforeClose()
 	// 添加启动信息
 	pterm.DefaultBox.Println("https://github.com/Liliya233/omega_launcher")
 	pterm.Info.Println("Omega Launcher", pterm.Yellow("(", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 确保目录可用
 	if err := os.Chdir(utils.GetCurrentDir()); err != nil {
-		pterm.Error.Printf("读取当前目录时出现问题")
 		panic(err)
 	}
 	// 启动

@@ -39,7 +39,7 @@ func Run(botCfg *defines.LauncherConfig) {
 	// 如果不存在cqhttp程序则解压
 	if !utils.IsFile(path.Join(GetCqHttpExec())) {
 		if err := utils.WriteFileData(GetCqHttpExec(), GetCqHttpBinary()); err != nil {
-			pterm.Error.Println("解压 go-cqhttp 时遇到问题")
+			pterm.Fatal.WithFatal(false).Println("解压 go-cqhttp 时遇到问题")
 			panic(err)
 		}
 	}
@@ -48,7 +48,7 @@ func Run(botCfg *defines.LauncherConfig) {
 	// 配置地址同步
 	port, err := utils.GetAvailablePort()
 	if err != nil {
-		pterm.Error.Println("无法为 go-cqhttp 获取可用端口")
+		pterm.Fatal.WithFatal(false).Println("无法为 go-cqhttp 获取可用端口")
 		panic(err)
 	}
 	availableAddress := fmt.Sprintf("127.0.0.1:%d", port)
@@ -85,12 +85,12 @@ func Run(botCfg *defines.LauncherConfig) {
 		pterm.Success.Println("正在启动 go-cqhttp")
 		err := cmd.Start()
 		if err != nil {
-			pterm.Error.Println("go-cqhttp 启动时出现错误")
+			pterm.Fatal.WithFatal(false).Println("go-cqhttp 启动时出现错误")
 			panic(err)
 		}
 		err = cmd.Wait()
 		if err != nil {
-			pterm.Error.Println("go-cqhttp 运行时出现错误")
+			pterm.Fatal.WithFatal(false).Println("go-cqhttp 运行时出现错误")
 			panic(err)
 		}
 	}()

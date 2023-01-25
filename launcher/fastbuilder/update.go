@@ -34,7 +34,7 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 		pterm.Info.Println("将使用本地仓库进行更新 (自用)")
 		STORAGE_REPO = defines.LOCAL_REPO
 	default:
-		panic("无效的仓库, 请重新进行选择")
+		panic("无效的仓库, 请重新配置")
 	}
 }
 

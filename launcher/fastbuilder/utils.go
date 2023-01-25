@@ -76,9 +76,7 @@ func CheckExecFile() {
 	if utils.IsFile(getFBExecPath()) {
 		pterm.Success.Println("已从当前目录读取到 Fastbuilder")
 	} else {
-		pterm.Error.Println("请先下载 Fastbuilder 至当前目录")
-		pterm.Error.Println("所需 Fastbuilder 的文件名为: " + GetFBExecName())
-		panic("当前目录不存在 Fastbuilder")
+		panic("当前目录不存在文件名为 " + GetFBExecName() + " 的 Fastbuilder")
 	}
 }
 

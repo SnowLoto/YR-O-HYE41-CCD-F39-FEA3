@@ -39,7 +39,7 @@ func getCQConfig() *defines.CQHttpConfig {
 func writeCQConfig(cfgStr string) {
 	err := utils.WriteFileData(path.Join(GetCQHttpDir(), "config.yml"), []byte(cfgStr))
 	if err != nil {
-		pterm.Error.Println("更新 go-cqhttp 配置文件时遇到问题")
+		pterm.Fatal.WithFatal(false).Println("更新 go-cqhttp 配置文件时遇到问题")
 		panic(err)
 	}
 }
