@@ -69,8 +69,8 @@ func updateOmegaConfigAddress(address string) (qGroupCfgFp, qGuildCfgFp string) 
 		}
 	}
 	if !hasQGuildCfg {
-		utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通"))
-		qGuildCfgFp = path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")
+		utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通"))
+		qGuildCfgFp = path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")
 		newQGuildCfg := &defines.OmegaComponentConfig{}
 		if err := json.Unmarshal(defaultQGuildLinkConfigByte, newQGuildCfg); err == nil {
 			newQGuildCfg.Configs["CQHTTP正向Websocket代理地址"] = address

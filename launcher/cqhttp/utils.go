@@ -133,7 +133,7 @@ func UnPackCQHttpRunAuth() {
 			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-群服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json")); err != nil {
 				panic(err)
 			}
-			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方", "Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")); err != nil {
+			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")); err != nil {
 				panic(err)
 			}
 			pterm.Success.Println("导入应该成功了")
