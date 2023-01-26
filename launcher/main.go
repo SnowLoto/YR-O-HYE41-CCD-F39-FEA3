@@ -10,6 +10,7 @@ import (
 	"omega_launcher/utils"
 	"os"
 	"path"
+	"time"
 
 	"github.com/pterm/pterm"
 )
@@ -25,8 +26,7 @@ func beforeClose() {
 	}
 	// Make Windows users happy
 	if p := embed_binary.GetPlantform(); p == embed_binary.WINDOWS_x86_64 || p == embed_binary.WINDOWS_arm64 {
-		fmt.Println("按下回车键退出程序...")
-		fmt.Scanln()
+		time.Sleep(time.Second * 5)
 	}
 }
 

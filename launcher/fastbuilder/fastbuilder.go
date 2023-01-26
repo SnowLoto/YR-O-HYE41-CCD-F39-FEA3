@@ -171,7 +171,7 @@ func Run(cfg *defines.LauncherConfig) {
 		// 判断是否正常退出
 		if isStopped {
 			pterm.Success.Println("Omega/Fastbuilder 已正常退出, 启动器将结束运行")
-			time.Sleep(3 * time.Second)
+			time.Sleep(time.Second * 3)
 			break
 		} else {
 			stop <- "stop!!"
