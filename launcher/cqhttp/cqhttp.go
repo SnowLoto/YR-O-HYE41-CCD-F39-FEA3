@@ -104,10 +104,10 @@ func Run(botCfg *defines.LauncherConfig) {
 	PackCQHttpRunAuth(qGroupCfgFp, qGuildCfgFp)
 	// 打印提示消息
 	pterm.Info.Println(
-		" 若要为服务器配置 go-cqhttp, 请执行以下的操作：\n",
-		"1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录\n",
-		"2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下\n",
-		"3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了\n",
-		"如果遇到 go-cqhttp 相关的问题, 可前往 https://docs.go-cqhttp.org/ 寻找可用信息",
+		"若要为服务器配置 go-cqhttp, 请执行以下的操作：",
+		"\n1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录",
+		"\n2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下",
+		"\n3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了",
+		"\n如果遇到 go-cqhttp 相关的问题, 可前往 https://docs.go-cqhttp.org/ 寻找可用信息",
 	)
 }
