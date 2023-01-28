@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -29,7 +28,8 @@ func GetInput() string {
 
 func GetValidInput(text string) string {
 	for {
-		result, _ := pterm.DefaultInteractiveTextInput.WithMultiLine(false).Show(ConfPrinter.Sprint(text))
+		ConfPrinter.Print(text, ": ")
+		result := GetInput()
 		if result == "" {
 			pterm.Error.Print("无效输入，输入不能为空")
 			continue
@@ -41,7 +41,7 @@ func GetValidInput(text string) string {
 func GetPswInput(text string) string {
 	ConfPrinter.Printf(text + " (不会回显): ")
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	fmt.Print("\n")
+	pterm.Println()
 	if err != nil {
 		panic(err)
 	}
