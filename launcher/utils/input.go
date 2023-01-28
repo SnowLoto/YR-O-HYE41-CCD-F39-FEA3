@@ -6,7 +6,10 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
+	"atomicgo.dev/keyboard"
+	"atomicgo.dev/keyboard/keys"
 	"github.com/pterm/pterm"
 	"golang.org/x/term"
 )
@@ -56,6 +59,27 @@ func GetInputYN(text string) bool {
 	confirm.SuffixStyle = &pterm.Style{pterm.FgYellow}
 	// 显示并返回用户输入
 	result, _ := confirm.Show(ConfPrinter.Sprint(text))
+	return result
+}
+
+func GetInputYNInTime(text string, sec int32) bool {
+	isInput := false
+	// 自动确认
+	go func() {
+		time.Sleep(time.Second * time.Duration(sec))
+		if !isInput {
+			keyboard.SimulateKeyPress(keys.Enter)
+		}
+	}()
+	confirm := pterm.DefaultInteractiveConfirm
+	// 设置默认值为 Y
+	confirm.DefaultValue = true
+	// 修改待选项为黄色
+	confirm.SuffixStyle = &pterm.Style{pterm.FgYellow}
+	// 显示并返回用户输入
+	result, _ := confirm.Show(ConfPrinter.Sprint(text) + pterm.Yellow(pterm.Sprintf(" [%d秒后自动确认]", sec)))
+	// 取消自动确认
+	isInput = true
 	return result
 }
 

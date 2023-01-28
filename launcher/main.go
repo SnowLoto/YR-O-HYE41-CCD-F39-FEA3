@@ -48,7 +48,7 @@ func main() {
 	}
 	// 询问是否使用上一次的配置
 	if launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
-		if utils.GetInputYN("要使用和上次完全相同的配置启动吗?") {
+		if utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10) {
 			// 更新FB
 			if launcherConfig.UpdateFB {
 				fastbuilder.Update(launcherConfig, false)
