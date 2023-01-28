@@ -25,7 +25,7 @@ func loadCurrentFBToken() string {
 	if err != nil {
 		return ""
 	}
-	fbconfigdir := filepath.Join(homedir, ".config/fastbuilder")
+	fbconfigdir := filepath.Join(homedir, ".config", "fastbuilder")
 	token := filepath.Join(fbconfigdir, "fbtoken")
 	// 尝试读取token文件
 	if utils.IsFile(token) {

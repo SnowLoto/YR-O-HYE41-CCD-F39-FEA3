@@ -91,6 +91,10 @@ func main() {
 			cqhttp.Run(launcherConfig)
 		}
 	}
+	// 启动前先保存一次无Token配置
+	cfg := *launcherConfig
+	cfg.FBToken = ""
+	fastbuilder.SaveConfig(&cfg)
 	// 启动Omega或者FB
 	fastbuilder.Run(launcherConfig)
 }

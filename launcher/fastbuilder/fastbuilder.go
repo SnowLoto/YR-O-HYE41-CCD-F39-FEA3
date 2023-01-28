@@ -18,7 +18,7 @@ import (
 )
 
 // 保存配置文件
-func saveConfig(cfg *defines.LauncherConfig) {
+func SaveConfig(cfg *defines.LauncherConfig) {
 	if err := utils.WriteJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), cfg); err != nil {
 		pterm.Error.Println("无法记录配置, 不过可能不是什么大问题")
 	}
@@ -40,7 +40,7 @@ func RentalServerSetup(cfg *defines.LauncherConfig) {
 	cfg.RentalPasswd = utils.GetPswInput("请输入租赁服密码")
 }
 
-func Run(cfg *defines.LauncherConfig) {
+func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 	// 配置启动参数
 	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
@@ -51,10 +51,13 @@ func Run(cfg *defines.LauncherConfig) {
 	// 是否启动Omega
 	if cfg.StartOmega {
 		args = append(args, "-O")
-		pterm.Warning.Println("请使用 stop 命令来正确的退出程序")
-	} else {
-		pterm.Warning.Println("请使用 exit / fbexit 命令来正确的退出程序")
 	}
+	return args
+}
+
+func Run(cfg *defines.LauncherConfig) {
+	// 获取命令args
+	args := setupCmdArgs(cfg)
 	// 建立频道
 	readC := make(chan string)
 	stop := make(chan string)
@@ -68,11 +71,13 @@ func Run(cfg *defines.LauncherConfig) {
 	// 读取验证服务器返回的Token并保存
 	go func() {
 		for {
-			if strings.HasPrefix(cfg.FBToken, "w9/BeLNV/9") {
+			if isToken(cfg.FBToken) {
 				pterm.Success.Println("成功获取到Token")
-				saveConfig(cfg)
+				SaveConfig(cfg)
+				args = setupCmdArgs(cfg)
 				return
 			}
+			time.Sleep(time.Second)
 			cfg.FBToken = loadCurrentFBToken()
 		}
 	}()
@@ -191,7 +196,7 @@ func Run(cfg *defines.LauncherConfig) {
 		case <-readC:
 			restartTime = 0
 		case <-time.After(time.Second * time.Duration(restartTime)):
-			fmt.Println("")
+			fmt.Println()
 		}
 	}
 }
