@@ -16,7 +16,13 @@ var STORAGE_REPO = ""
 func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 	if reselect || cfg.Repo < 1 || cfg.Repo > 5 {
 		// 不再于列表提示自用仓库
-		utils.ConfPrinter.Println("当前可选择的仓库有：\n1. Github 仓库\n2. Github 镜像仓库\n3. 云裳仓库\n4.Dev(预览版)仓库")
+		utils.ConfPrinter.Println(
+			"当前可选择的仓库有：\n",
+			"1. Github 仓库\n",
+			"2. Github 镜像仓库\n",
+			"3. 云裳仓库\n",
+			"4. Dev(预览版)仓库",
+		)
 		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 5)
 	}
 	switch cfg.Repo {
