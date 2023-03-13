@@ -182,20 +182,21 @@ func Run(cfg *defines.LauncherConfig) {
 			stop <- "stop!!"
 			pterm.Error.Println("Oh no! Fastbuilder crashed!") // ?
 		}
-		// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
-		if time.Since(startTime) < time.Minute {
-			if restartTime < 1<<20 {
-				restartTime = restartTime<<1 + 1
-			}
-		} else {
-			restartTime = 0
-		}
 		pterm.Warning.Printf("似乎发生了错误, %d秒后会重新启动 Omega/Fastbuilder (按回车立即重启)", restartTime)
 		// 等待输入或计时结束
 		select {
 		case <-readC:
 			restartTime = 0
 		case <-time.After(time.Second * time.Duration(restartTime)):
+			// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
+			if time.Since(startTime)-time.Second*time.Duration(restartTime) < time.Minute {
+				if restartTime < 3600 {
+					restartTime = restartTime + 45
+				}
+			} else {
+				restartTime = 0
+			}
+			// 换行
 			fmt.Println()
 		}
 	}
