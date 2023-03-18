@@ -18,25 +18,25 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
 			"当前可选择的仓库有：\n",
-			"1. Github 仓库\n",
-			"2. Github 镜像仓库\n",
+			"1. Github 官方仓库\n",
+			"2. Github 官方镜像仓库\n",
 			"3. 云裳仓库\n",
-			"4. Dev(预览版)仓库",
+			"4. 预览版镜像仓库 (rnhws-Team)",
 		)
 		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 5)
 	}
 	switch cfg.Repo {
 	case 1:
-		pterm.Info.Println("将使用 Github 仓库进行更新")
+		pterm.Info.Println("将使用 Github 官方仓库进行更新")
 		STORAGE_REPO = defines.REMOTE_REPO
 	case 2:
-		pterm.Info.Println("将使用 Github 镜像仓库进行更新")
+		pterm.Info.Println("将使用 Github 官方镜像仓库进行更新")
 		STORAGE_REPO = defines.MIRROR_REPO
 	case 3:
-		pterm.Info.Println("将使用云裳仓库进行更新 (不一定最新)")
+		pterm.Info.Println("将使用云裳仓库进行更新")
 		STORAGE_REPO = defines.YSCLOUD_REPO
 	case 4:
-		pterm.Info.Println("将使用Dev版本（预览版）进行更新")
+		pterm.Info.Println("将使用预览版镜像仓库 (rnhws-Team) 进行更新")
 		STORAGE_REPO = defines.DEVMIRROR_REPO
 	case 5:
 		pterm.Info.Println("将使用本地仓库进行更新 (自用)")
