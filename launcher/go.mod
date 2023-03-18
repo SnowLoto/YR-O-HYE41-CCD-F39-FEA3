@@ -16,7 +16,7 @@ require (
 
 require (
 	atomicgo.dev/cursor v0.1.1 // indirect
-	atomicgo.dev/keyboard v0.2.8 // indirect
+	atomicgo.dev/keyboard v0.2.8
 	github.com/andybalholm/brotli v1.0.4
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/containerd/console v1.0.3 // indirect
