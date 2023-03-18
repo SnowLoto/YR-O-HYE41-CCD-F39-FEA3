@@ -35,7 +35,3 @@ func GetCurrentDataDir() string {
 	}
 	return GetCurrentDir()
 }
-
-func IsDocker() bool {
-	return IsFile(path.Join("/ome", "launcher_liliya"))
-}

@@ -59,9 +59,6 @@ func updateCQConfigAddress(address string) {
 
 // 初始化cqhttp配置文件
 func initCQConfig() {
-	if utils.IsDocker() {
-		panic("非本地环境只能通过上传文件的方式来配置 go-cqhttp")
-	}
 	// 要求输入cqhttp配置信息
 	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", utils.GetValidInput("请输入QQ账号"), 1)
 	cfgStr = strings.Replace(cfgStr, "[QQ密码]", utils.GetPswInput("请输入QQ密码"), 1)
