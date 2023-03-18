@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -36,29 +35,38 @@ func WriteFileData(fname string, data []byte) error {
 }
 
 func main() {
-	inFile := flag.String("in", "", "input")
-	outFile := flag.String("out", "", "outfile")
-	flag.Parse()
-	fmt.Printf("comprerss: %v -> %v ", *inFile, *outFile)
-	var origData []byte
-	var err error
-	origData, err = GetFileData(*inFile)
-	if err != nil || len(origData) == 0 {
-		panic(fmt.Sprintf("read %v fail", *inFile))
-
+	var cqList []string = []string{
+		"./go-cqhttp_darwin_amd64",
+		"./go-cqhttp_darwin_arm64",
+		"./go-cqhttp_linux_amd64",
+		"./go-cqhttp_linux_arm64",
+		"./go-cqhttp_windows_amd64.exe",
+		"./go-cqhttp_windows_arm64.exe",
 	}
 
-	buf := bytes.NewBuffer([]byte{})
-	compressor := brotli.NewWriterLevel(buf, brotli.DefaultCompression)
-	compressor.Write(origData)
-	compressor.Close()
-	newData := buf.Bytes()
+	for _, inFile := range cqList {
+		outFile := inFile + ".brotli"
+		fmt.Printf("comprerss: %v -> %v ", inFile, outFile)
+		var origData []byte
+		var err error
+		origData, err = GetFileData(inFile)
+		if err != nil || len(origData) == 0 {
+			panic(fmt.Sprintf("read %v fail", inFile))
 
-	if err := WriteFileData(*outFile, newData); err != nil {
-		panic(err)
+		}
+
+		buf := bytes.NewBuffer([]byte{})
+		compressor := brotli.NewWriterLevel(buf, brotli.DefaultCompression)
+		compressor.Write(origData)
+		compressor.Close()
+		newData := buf.Bytes()
+
+		if err := WriteFileData(outFile, newData); err != nil {
+			panic(err)
+		}
+
+		fmt.Printf(" compress %.3f\n", float32(len(newData))/float32(len(origData)))
 	}
-
-	fmt.Printf(" compress %.3f\n", float32(len(newData))/float32(len(origData)))
 
 	// var compressedData []byte
 	// if compressedData, err = GetFileData(*outFile); err != nil {
