@@ -42,17 +42,19 @@ func main() {
 		"./go-cqhttp_linux_arm64",
 		"./go-cqhttp_windows_amd64.exe",
 		"./go-cqhttp_windows_arm64.exe",
+		"./go-cqhttp_android_amd64",
+		"./go-cqhttp_android_arm64",
 	}
 
 	for _, inFile := range cqList {
 		outFile := inFile + ".brotli"
-		fmt.Printf("comprerss: %v -> %v ", inFile, outFile)
+		fmt.Printf("comprerss: %v -> %v \n", inFile, outFile)
 		var origData []byte
 		var err error
 		origData, err = GetFileData(inFile)
 		if err != nil || len(origData) == 0 {
-			panic(fmt.Sprintf("read %v fail", inFile))
-
+			fmt.Printf("read %v fail\n", inFile)
+			continue
 		}
 
 		buf := bytes.NewBuffer([]byte{})
