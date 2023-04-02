@@ -1,6 +1,7 @@
-**/.vscode
-**/build
-*/服务器登录配置.json
-*/cqhttp_storage
-*/omega_storage
-*.exe
+/.vscode
+/build
+/*.exe
+
+/服务器登录配置.json
+/cqhttp_storage
+/omega_storage
