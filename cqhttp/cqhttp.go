@@ -35,12 +35,10 @@ func Run(botCfg *defines.LauncherConfig) {
 	if !utils.IsDir(GetCQHttpDir()) {
 		panic("cqhttp_storage 目录不存在, 请使用启动器配置一次 go-cqhttp")
 	}
-	// 如果不存在cqhttp程序则解压
-	if !utils.IsFile(path.Join(GetCqHttpExec())) {
-		if err := utils.WriteFileData(GetCqHttpExec(), GetCqHttpBinary()); err != nil {
-			pterm.Fatal.WithFatal(false).Println("解压 go-cqhttp 时遇到问题")
-			panic(err)
-		}
+	// 考虑到有自定义需求的用户很少需要启动器配置cqhttp, 故强制更新cqhttp程序, 以解决需要手动删除更新的问题
+	if err := utils.WriteFileData(GetCqHttpExec(), GetCqHttpBinary()); err != nil {
+		pterm.Fatal.WithFatal(false).Println("解压 go-cqhttp 时遇到问题")
+		panic(err)
 	}
 	// 读取Omega配置
 	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
