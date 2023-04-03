@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io"
 	"net/url"
-	"omega_launcher/embed_binary"
 	"omega_launcher/fastbuilder"
+	"omega_launcher/plantform"
 	"omega_launcher/utils"
 	"os"
 	"path"
@@ -19,7 +19,7 @@ import (
 
 func GetCqHttpExec() string {
 	cqhttp := "cqhttp"
-	if embed_binary.GetPlantform() == embed_binary.WINDOWS_x86_64 {
+	if plantform.GetPlantform() == plantform.WINDOWS_x86_64 {
 		cqhttp = "cqhttp.exe"
 	}
 	cqhttp = path.Join(utils.GetCurrentDir(), cqhttp)
@@ -31,7 +31,7 @@ func GetCqHttpExec() string {
 }
 
 func GetCqHttpBinary() []byte {
-	compressedData := embed_binary.GetCqHttpBinary()
+	compressedData := plantform.GetCqHttpBinary()
 	var execBytes []byte
 	var err error
 	if execBytes, err = io.ReadAll(brotli.NewReader(bytes.NewReader(compressedData))); err != nil {

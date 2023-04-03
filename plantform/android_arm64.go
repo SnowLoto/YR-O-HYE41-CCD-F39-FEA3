@@ -1,12 +1,12 @@
 //go:build android && arm64
 // +build android,arm64
 
-package embed_binary
+package plantform
 
 import (
 	_ "embed"
 )
 
-//go:embed assets/go-cqhttp_android_arm64.brotli
+//go:embed cqhttp_brotli/go-cqhttp_android_arm64.brotli
 var embedding_cqhttp []byte
 var PLANTFORM = Android_arm64

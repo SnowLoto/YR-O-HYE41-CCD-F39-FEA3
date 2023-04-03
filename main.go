@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"omega_launcher/cqhttp"
 	"omega_launcher/defines"
-	"omega_launcher/embed_binary"
 	"omega_launcher/fastbuilder"
+	"omega_launcher/plantform"
 	"omega_launcher/utils"
 	"os"
 	"path"
@@ -25,7 +25,7 @@ func beforeClose() {
 		pterm.Fatal.WithFatal(false).Println(err)
 	}
 	// Make Windows users happy
-	if p := embed_binary.GetPlantform(); p == embed_binary.WINDOWS_x86_64 || p == embed_binary.WINDOWS_arm64 {
+	if p := plantform.GetPlantform(); p == plantform.WINDOWS_x86_64 || p == plantform.WINDOWS_arm64 {
 		time.Sleep(time.Second * 5)
 	}
 }

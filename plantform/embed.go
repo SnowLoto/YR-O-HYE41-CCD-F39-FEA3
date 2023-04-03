@@ -1,4 +1,4 @@
-package embed_binary
+package plantform
 
 const (
 	Android_arm64  = "android_arm64"

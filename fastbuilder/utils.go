@@ -2,7 +2,7 @@ package fastbuilder
 
 import (
 	"encoding/json"
-	"omega_launcher/embed_binary"
+	"omega_launcher/plantform"
 	"omega_launcher/utils"
 	"path"
 	"path/filepath"
@@ -13,27 +13,27 @@ import (
 // 获取FB文件名
 func GetFBExecName() string {
 	name := ""
-	switch embed_binary.GetPlantform() {
-	case embed_binary.WINDOWS_arm64:
+	switch plantform.GetPlantform() {
+	case plantform.WINDOWS_arm64:
 		// 不存在该构建
 		name = ""
-	case embed_binary.WINDOWS_x86_64:
+	case plantform.WINDOWS_x86_64:
 		name = "phoenixbuilder-windows-executable-x86_64.exe"
-	case embed_binary.Linux_arm64:
+	case plantform.Linux_arm64:
 		name = "phoenixbuilder-aarch64"
-	case embed_binary.Linux_x86_64:
+	case plantform.Linux_x86_64:
 		name = "phoenixbuilder"
-	case embed_binary.MACOS_arm64:
+	case plantform.MACOS_arm64:
 		name = "phoenixbuilder-macos-arm64"
-	case embed_binary.MACOS_x86_64:
+	case plantform.MACOS_x86_64:
 		name = "phoenixbuilder-macos-x86_64"
-	case embed_binary.Android_arm64:
+	case plantform.Android_arm64:
 		name = "phoenixbuilder-android-termux-shared-executable-arm64"
-	case embed_binary.Android_x86_64:
+	case plantform.Android_x86_64:
 		name = "phoenixbuilder-android-termux-shared-executable-x86_64"
 	}
 	if name == "" {
-		panic("尚未支持该平台" + embed_binary.GetPlantform())
+		panic("尚未支持该平台" + plantform.GetPlantform())
 	}
 	return name
 }

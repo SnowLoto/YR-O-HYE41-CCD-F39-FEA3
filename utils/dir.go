@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"omega_launcher/embed_binary"
+	"omega_launcher/plantform"
 	"os"
 	"path"
 	"path/filepath"
@@ -21,8 +21,8 @@ func GetCurrentDir() string {
 
 func GetCurrentDataDir() string {
 	// Android环境下, 尝试将数据文件放在 /sdcard/Download
-	plantform := embed_binary.GetPlantform()
-	if plantform == embed_binary.Android_arm64 || plantform == embed_binary.Android_x86_64 {
+	currentPlantform := plantform.GetPlantform()
+	if currentPlantform == plantform.Android_arm64 || currentPlantform == plantform.Android_x86_64 {
 		if IsDir("/sdcard/Download/omega_storage") {
 			return path.Join("/sdcard/Download")
 		} else {
