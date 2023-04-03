@@ -5,3 +5,5 @@
 /服务器登录配置.json
 /cqhttp_storage
 /omega_storage
+
+/compressor/go-cqhttp_*
