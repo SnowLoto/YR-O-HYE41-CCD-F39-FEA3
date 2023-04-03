@@ -84,7 +84,7 @@ func Run(cfg *defines.LauncherConfig) {
 	// 重启间隔
 	restartTime := 0
 	// 监听程序退出信号
-	exitSignal := make(chan os.Signal)
+	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, os.Interrupt)
 	signal.Notify(exitSignal, syscall.SIGTERM)
 	signal.Notify(exitSignal, syscall.SIGQUIT)

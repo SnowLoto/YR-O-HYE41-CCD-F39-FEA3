@@ -14,32 +14,28 @@ var STORAGE_REPO = ""
 
 // 仓库选择
 func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
-	if reselect || cfg.Repo < 1 || cfg.Repo > 5 {
+	if reselect || cfg.Repo < 1 || cfg.Repo > 4 {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
 			"当前可选择的仓库有：\n",
-			"1. Github 官方仓库\n",
-			"2. Github 官方镜像仓库\n",
-			"3. 云裳仓库\n",
-			"4. 预览版镜像仓库 (rnhws-Team)",
+			"1. 官方仓库\n",
+			"2. 云裳公益镜像仓库\n",
+			"3. rnhws-Team 仓库",
 		)
-		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 5)
+		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 4)
 	}
 	switch cfg.Repo {
 	case 1:
-		pterm.Info.Println("将使用 Github 官方仓库进行更新")
-		STORAGE_REPO = defines.REMOTE_REPO
+		pterm.Info.Printfln("将使用官方仓库 (%s) 进行更新", defines.OFFICIAL_REPO)
+		STORAGE_REPO = defines.OFFICIAL_REPO
 	case 2:
-		pterm.Info.Println("将使用 Github 官方镜像仓库进行更新")
-		STORAGE_REPO = defines.MIRROR_REPO
-	case 3:
-		pterm.Info.Println("将使用云裳仓库进行更新")
+		pterm.Info.Printfln("将使用云裳公益镜像仓库 (%s) 进行更新", defines.YSCLOUD_REPO)
 		STORAGE_REPO = defines.YSCLOUD_REPO
+	case 3:
+		pterm.Info.Printfln("将使用 rnhws-Team 仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO)
+		STORAGE_REPO = defines.RNHWS_TEAM_REPO
 	case 4:
-		pterm.Info.Println("将使用预览版镜像仓库 (rnhws-Team) 进行更新")
-		STORAGE_REPO = defines.DEVMIRROR_REPO
-	case 5:
-		pterm.Info.Println("将使用本地仓库进行更新 (自用)")
+		pterm.Info.Printfln("将使用 本地仓库 (%s) 进行更新", defines.LOCAL_REPO)
 		STORAGE_REPO = defines.LOCAL_REPO
 	default:
 		panic("无效的仓库, 请重新配置")
@@ -69,11 +65,7 @@ func download() {
 func Update(cfg *defines.LauncherConfig, reselect bool) {
 	selectRepo(cfg, reselect)
 	pterm.Warning.Println("正在从指定仓库获取更新信息..")
-	targetHash := getRemoteFBHash(STORAGE_REPO)
-	currentHash := getCurrentFBHash()
-	//fmt.Println(targetHash)
-	//fmt.Println(currentHash)
-	if targetHash == currentHash {
+	if getRemoteFBHash(STORAGE_REPO) == getCurrentFBHash() {
 		pterm.Success.Println("太好了, 你的 Fastbuilder 已经是最新的了!")
 	} else {
 		pterm.Warning.Println("正在为你下载最新的 Fastbuilder, 请保持耐心..")
