@@ -68,19 +68,6 @@ func Run(cfg *defines.LauncherConfig) {
 			readC <- s
 		}
 	}()
-	// 读取验证服务器返回的Token并保存
-	go func() {
-		for {
-			if isToken(cfg.FBToken) {
-				pterm.Success.Println("成功获取到Token")
-				SaveConfig(cfg)
-				args = setupCmdArgs(cfg)
-				return
-			}
-			time.Sleep(time.Second)
-			cfg.FBToken = loadCurrentFBToken()
-		}
-	}()
 	// 重启间隔
 	restartTime := 0
 	// 监听程序退出信号
@@ -89,14 +76,16 @@ func Run(cfg *defines.LauncherConfig) {
 	signal.Notify(exitSignal, syscall.SIGTERM)
 	signal.Notify(exitSignal, syscall.SIGQUIT)
 	for {
+		// 启动成功提示语
+		successTip := pterm.Success.Sprint("辅助用户已成功登录至租赁服") + "\n"
 		// 记录启动时间
 		startTime := time.Now()
+		// 是否已正常启动
+		isStarted := false
 		// 是否停止
 		isStopped := false
-		// 最近一次输入, 用于忽略对输入内容的重复输出
-		lastInput := ""
 		// 启动时提示信息
-		pterm.Success.Println("如果 Omega/Fastbuilder 崩溃了, 它将在一段时间后自动重启")
+		pterm.Success.Println("正在启动 Omega/Fastbuilder")
 		// 启动命令
 		cmd := exec.Command(getFBExecPath(), args...)
 		cmd.Dir = path.Join(utils.GetCurrentDataDir())
@@ -112,17 +101,16 @@ func Run(cfg *defines.LauncherConfig) {
 		if err != nil {
 			panic(err)
 		}
+		// 仅启动 FB 时需要额外提示
+		if !cfg.StartOmega {
+			omega_in.Write([]byte("say " + successTip))
+		}
 		// 从管道中获取并打印Fastbuilder输出内容
 		go func() {
 			reader := bufio.NewReader(omega_out)
 			for {
 				readString, err := reader.ReadString('\n')
 				readString = strings.TrimPrefix(readString, "> ")
-				if lastInput != "" && strings.HasPrefix(readString, lastInput) {
-					lastInput = ""
-					continue
-				}
-				lastInput = ""
 				if readString == "\n" {
 					continue
 				}
@@ -131,6 +119,13 @@ func Run(cfg *defines.LauncherConfig) {
 					return
 				}
 				fmt.Print(readString + "\033[0m")
+				// 成功启动后处理
+				if !isStarted && (readString == successTip || readString == "Starting Omega in a second\n") {
+					isStarted = true
+					// 读取验证服务器返回的Token并保存
+					cfg.FBToken = loadCurrentFBToken()
+					SaveConfig(cfg)
+				}
 			}
 		}()
 		// 在未收到停止信号前, 启动器会一直将控制台输入的内容通过管道发送给Fastbuilder
@@ -143,7 +138,6 @@ func Run(cfg *defines.LauncherConfig) {
 					// 强制退出
 					os.Exit(1)
 				case s := <-readC:
-					lastInput = s
 					// 接收到停止命令时处理
 					if (cfg.StartOmega && s == "stop") || s == "exit" || s == "fbexit" {
 						// 关闭重启

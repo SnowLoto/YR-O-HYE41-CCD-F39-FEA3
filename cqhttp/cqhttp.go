@@ -79,7 +79,7 @@ func Run(botCfg *defines.LauncherConfig) {
 	}()
 	// 启动并持续运行cqhttp
 	go func() {
-		pterm.Success.Println("正在启动 go-cqhttp")
+		pterm.Success.Println("正在启动 go-cqhttp, 请根据其提示进行操作")
 		err := cmd.Start()
 		if err != nil {
 			pterm.Fatal.WithFatal(false).Println("go-cqhttp 启动时出现错误")
@@ -102,7 +102,7 @@ func Run(botCfg *defines.LauncherConfig) {
 	PackCQHttpRunAuth(qGroupCfgFp, qGuildCfgFp)
 	// 打印提示消息
 	pterm.Info.Println(
-		"若要为服务器配置 go-cqhttp, 你可以尝试直接使用账密登录, 或者上传 data 文件并执行以下的操作：",
+		"若要为服务器配置 go-cqhttp, 可尝试直接使用账密登录, 或者执行以下的操作：",
 		"\n1. 在服务器成功启动一次 Omega, 以生成 omega_storage 目录",
 		"\n2. 将 上传这个文件到云服务器以使用云服务器的群服互通.data 上传至服务器 omega_storage 目录下",
 		"\n3. 重启启动器并选择启动 go-cqhttp, 此时应该能够识别到 data 文件了",
