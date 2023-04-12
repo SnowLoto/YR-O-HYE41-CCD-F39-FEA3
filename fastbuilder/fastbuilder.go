@@ -56,6 +56,8 @@ func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 }
 
 func Run(cfg *defines.LauncherConfig) {
+	// 启动成功提示语
+	successTip := "已成功进入租赁服"
 	// 获取命令args
 	args := setupCmdArgs(cfg)
 	// 建立频道
@@ -70,14 +72,14 @@ func Run(cfg *defines.LauncherConfig) {
 	}()
 	// 重启间隔
 	restartTime := 0
+	// 上次输入
+	lastInput := ""
 	// 监听程序退出信号
 	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, os.Interrupt)
 	signal.Notify(exitSignal, syscall.SIGTERM)
 	signal.Notify(exitSignal, syscall.SIGQUIT)
 	for {
-		// 启动成功提示语
-		successTip := pterm.Success.Sprint("辅助用户已成功登录至租赁服") + "\n"
 		// 记录启动时间
 		startTime := time.Now()
 		// 是否已正常启动
@@ -107,7 +109,7 @@ func Run(cfg *defines.LauncherConfig) {
 		}
 		// 仅启动 FB 时需要额外提示
 		if !cfg.StartOmega {
-			omega_in.Write([]byte("say " + successTip))
+			omega_in.Write([]byte("say " + successTip + "\n"))
 		}
 		// 从管道中获取并打印Fastbuilder错误内容
 		go func() {
@@ -134,7 +136,8 @@ func Run(cfg *defines.LauncherConfig) {
 			for {
 				readString, err := reader.ReadString('\n')
 				readString = strings.TrimPrefix(readString, "> ")
-				if readString == "\n" {
+				if readString == "\n" || readString == lastInput+"\n" || readString == "say "+successTip+"\n" {
+					lastInput = ""
 					continue
 				}
 				if err != nil || err == io.EOF {
@@ -143,11 +146,13 @@ func Run(cfg *defines.LauncherConfig) {
 				}
 				fmt.Print(readString + "\033[0m")
 				// 成功启动后处理
-				if !isStarted && (readString == successTip || readString == "Starting Omega in a second\n") {
+				if !isStarted && (readString == successTip+"\n" || readString == "Starting Omega in a second\n") {
 					isStarted = true
 					// 读取验证服务器返回的Token并保存
 					cfg.FBToken = loadCurrentFBToken()
-					SaveConfig(cfg)
+					if cfg.FBToken != "" {
+						SaveConfig(cfg)
+					}
 				}
 			}
 		}()
@@ -172,6 +177,7 @@ func Run(cfg *defines.LauncherConfig) {
 					// 强制退出
 					os.Exit(1)
 				case s := <-readC:
+					lastInput = s
 					// 接收到停止命令时处理
 					if (cfg.StartOmega && s == "stop") || s == "exit" || s == "fbexit" {
 						// 关闭重启

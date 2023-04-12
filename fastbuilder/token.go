@@ -11,7 +11,7 @@ import (
 )
 
 // 判断是否为token
-func isToken(token string) bool {
+func IsToken(token string) bool {
 	if strings.HasPrefix(token, "w9/BeLNV/") || strings.HasPrefix(token, "w9/abqFz/") {
 		return true
 	}
@@ -41,7 +41,7 @@ func requestToken() string {
 	// 尝试加载现有的token
 	currentFbToken := loadCurrentFBToken()
 	// 读取成功, 提示是否使用
-	if currentFbToken != "" && isToken(currentFbToken) {
+	if currentFbToken != "" && IsToken(currentFbToken) {
 		if utils.GetInputYN("要使用当前设备储存的 Token 吗?") {
 			return currentFbToken
 		}
@@ -49,7 +49,7 @@ func requestToken() string {
 	// 获取新的token
 	Code := utils.GetValidInput("请输入 Fastbuilder 账号, 或者输入 Token")
 	// 输入token则直接返回
-	if isToken(Code) {
+	if IsToken(Code) {
 		pterm.Success.Println("输入内容为 FBToken")
 		return Code
 	}
