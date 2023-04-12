@@ -85,11 +85,7 @@ func Run(botCfg *defines.LauncherConfig) {
 			pterm.Fatal.WithFatal(false).Println("go-cqhttp 启动时出现错误")
 			panic(err)
 		}
-		err = cmd.Wait()
-		if err != nil {
-			pterm.Fatal.WithFatal(false).Println("go-cqhttp 运行时出现错误")
-			panic(err)
-		}
+		cmd.Wait()
 	}()
 	// 等待cqhttp启动完成
 	WaitConnect(availableAddress)

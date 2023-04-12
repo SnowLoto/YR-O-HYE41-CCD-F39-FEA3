@@ -192,13 +192,9 @@ func Run(cfg *defines.LauncherConfig) {
 		err = cmd.Start()
 		if !isStopped && err != nil {
 			pterm.Error.Println("Omega/Fastbuilder 启动时出现错误")
-			pterm.Error.Println(err)
+			panic(err)
 		}
 		err = cmd.Wait()
-		if !isStopped && err != nil {
-			pterm.Error.Println("Omega/Fastbuilder 运行时出现错误")
-			pterm.Error.Println(err)
-		}
 		// 如果运行到这里, 说明Fastbuilder出现错误或退出运行了
 		cmd.Process.Kill()
 		// 判断是否正常退出
@@ -208,7 +204,7 @@ func Run(cfg *defines.LauncherConfig) {
 			break
 		} else {
 			stop <- "stop!!"
-			pterm.Error.Println("Oh no! Fastbuilder crashed!") // ?
+			pterm.Error.Printfln("Oh no! Fastbuilder crashed! (%s)", err.Error()) // ?
 		}
 		// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
 		if time.Since(startTime) < time.Minute {
@@ -218,7 +214,7 @@ func Run(cfg *defines.LauncherConfig) {
 		} else {
 			restartTime = 0
 		}
-		pterm.Warning.Printf("似乎发生了错误, %d秒后会重新启动 Omega/Fastbuilder (按回车立即重启)", restartTime)
+		pterm.Warning.Printf("Omega/Fastbuilder 将在%d秒后重新启动 (按回车立即重启)", restartTime)
 		// 等待输入或计时结束
 		select {
 		case <-readC:
