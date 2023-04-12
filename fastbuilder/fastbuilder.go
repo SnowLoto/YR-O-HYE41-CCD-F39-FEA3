@@ -89,8 +89,12 @@ func Run(cfg *defines.LauncherConfig) {
 		// 启动命令
 		cmd := exec.Command(getFBExecPath(), args...)
 		cmd.Dir = path.Join(utils.GetCurrentDataDir())
-		cmd.Stderr = os.Stderr
 		// 由于需要对内容进行处理, 所以不能直接进行io复制
+		// 建立从Fastbuilder到控制台的错误管道
+		omega_err, err := cmd.StderrPipe()
+		if err != nil {
+			panic(err)
+		}
 		// 建立从Fastbuilder到控制台的输出管道
 		omega_out, err := cmd.StdoutPipe()
 		if err != nil {
@@ -105,6 +109,25 @@ func Run(cfg *defines.LauncherConfig) {
 		if !cfg.StartOmega {
 			omega_in.Write([]byte("say " + successTip))
 		}
+		// 从管道中获取并打印Fastbuilder错误内容
+		go func() {
+			reader := bufio.NewReader(omega_err)
+			for {
+				readString, err := reader.ReadString('\n')
+				if readString == "\n" {
+					continue
+				}
+				if err != nil || err == io.EOF {
+					//pterm.Error.Println("读取 Omega/Fastbuilder 错误内容时出现错误")
+					return
+				}
+				// 如果程序正在退出则不再发送错误信息
+				if isStopped {
+					return
+				}
+				fmt.Print(readString + "\033[0m")
+			}
+		}()
 		// 从管道中获取并打印Fastbuilder输出内容
 		go func() {
 			reader := bufio.NewReader(omega_out)
@@ -135,6 +158,17 @@ func Run(cfg *defines.LauncherConfig) {
 				case <-stop:
 					return
 				case <-exitSignal:
+					// 关闭重启
+					isStopped = true
+					// 正常运行时使用关闭命令退出程序
+					if isStarted {
+						if cfg.StartOmega {
+							omega_in.Write([]byte("stop\n"))
+						} else {
+							omega_in.Write([]byte("exit\n"))
+						}
+						return
+					}
 					// 强制退出
 					os.Exit(1)
 				case s := <-readC:
@@ -156,12 +190,12 @@ func Run(cfg *defines.LauncherConfig) {
 		}()
 		// 启动并持续运行Fastbuilder
 		err = cmd.Start()
-		if err != nil {
+		if !isStopped && err != nil {
 			pterm.Error.Println("Omega/Fastbuilder 启动时出现错误")
 			pterm.Error.Println(err)
 		}
 		err = cmd.Wait()
-		if err != nil {
+		if !isStopped && err != nil {
 			pterm.Error.Println("Omega/Fastbuilder 运行时出现错误")
 			pterm.Error.Println(err)
 		}
