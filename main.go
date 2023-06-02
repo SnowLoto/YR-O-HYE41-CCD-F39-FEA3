@@ -32,10 +32,6 @@ func beforeClose() {
 
 func main() {
 	defer beforeClose()
-	// 添加启动信息
-	pterm.DefaultBox.Println("https://github.com/Liliya233/omega_launcher")
-	pterm.Info.Println("Omega Launcher", pterm.Yellow("(", string(version), ")"))
-	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 确保目录可用
 	if err := os.Chdir(utils.GetCurrentDir()); err != nil {
 		panic(err)
@@ -46,6 +42,16 @@ func main() {
 	if err := utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig); err != nil {
 		panic(err)
 	}
+	// 版本对比, 不一致时提示更新可用
+	verInfo := "Omega Launcher" + pterm.Yellow(" (", string(version), ")")
+	currentVer := string(version)
+	if currentVer != launcherConfig.LatestVer && launcherConfig.LatestVer != "" {
+		verInfo += pterm.Yellow(" (更新可用)")
+	}
+	// 添加启动信息
+	pterm.DefaultBox.Println("https://github.com/Liliya233/omega_launcher")
+	pterm.Info.Println(verInfo)
+	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 询问是否使用上一次的配置
 	if launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
 		if utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10) {

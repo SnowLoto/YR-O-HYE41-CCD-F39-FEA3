@@ -56,6 +56,14 @@ func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 }
 
 func Run(cfg *defines.LauncherConfig) {
+	// 获取启动器版本信息
+	go func() {
+		latestVer := utils.GetLauncherUpdateInfo()
+		if latestVer != "" {
+			cfg.LatestVer = latestVer
+			SaveConfig(cfg)
+		}
+	}()
 	// 启动成功提示语
 	successTip := "已成功进入租赁服"
 	// 获取命令args

@@ -2,6 +2,7 @@ package defines
 
 // 启动器配置文件结构
 type LauncherConfig struct {
+	LatestVer         string `json:"最新版本"`
 	Repo              int    `json:"仓库序号"`
 	RentalCode        string `json:"租赁服号"`
 	RentalPasswd      string `json:"租赁服密码"`
