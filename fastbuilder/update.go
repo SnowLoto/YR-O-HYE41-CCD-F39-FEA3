@@ -18,11 +18,11 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
 			"当前可选择的仓库有：\n",
-			"1. 官方仓库\n",
+			"1. 官方仓库 (推荐)\n",
 			"2. 官方镜像仓库\n",
-			"3. 云裳公益镜像仓库\n",
-			"4. rnhws-Team 仓库\n",
-			"5. rnhws-Team 镜像仓库",
+			"3. 海的官方镜像仓库\n",
+			"4. rnhws-Team 预览版仓库\n",
+			"5. rnhws-Team 预览版镜像仓库",
 		)
 		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 6)
 	}
@@ -34,13 +34,13 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 		pterm.Info.Printfln("将使用官方镜像仓库 (%s) 进行更新", defines.OFFICIAL_REPO_MIRROR)
 		STORAGE_REPO = defines.OFFICIAL_REPO_MIRROR
 	case 3:
-		pterm.Info.Printfln("将使用云裳公益镜像仓库 (%s) 进行更新", defines.YSCLOUD_REPO)
-		STORAGE_REPO = defines.YSCLOUD_REPO
+		pterm.Info.Printfln("将使用海的官方镜像仓库 (%s) 进行更新", defines.SEA_REPO)
+		STORAGE_REPO = defines.SEA_REPO
 	case 4:
-		pterm.Info.Printfln("将使用 rnhws-Team 仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO)
+		pterm.Info.Printfln("将使用 rnhws-Team 预览版仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO)
 		STORAGE_REPO = defines.RNHWS_TEAM_REPO
 	case 5:
-		pterm.Info.Printfln("将使用 rnhws-Team 镜像仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO_MIRROR)
+		pterm.Info.Printfln("将使用 rnhws-Team 预览版镜像仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO_MIRROR)
 		STORAGE_REPO = defines.RNHWS_TEAM_REPO_MIRROR
 	case 6:
 		pterm.Info.Printfln("将使用 本地仓库 (%s) 进行更新", defines.LOCAL_REPO)
