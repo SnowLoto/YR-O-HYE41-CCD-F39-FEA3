@@ -218,7 +218,11 @@ func Run(cfg *defines.LauncherConfig) {
 			break
 		} else {
 			stop <- "stop!!"
-			pterm.Error.Printfln("Oh no! Fastbuilder crashed! (%s)", err.Error()) // ?
+			errInfo := "Oh no! Fastbuilder crashed!"
+			if err != nil {
+				errInfo += fmt.Sprintf("(%s)", err.Error())
+			}
+			pterm.Error.Printfln(errInfo) // ?
 		}
 		// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
 		if time.Since(startTime) < time.Minute {
