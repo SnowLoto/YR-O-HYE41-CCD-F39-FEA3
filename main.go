@@ -41,7 +41,7 @@ func main() {
 	// 读取配置
 	launcherConfig := &defines.LauncherConfig{}
 	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
-	// 获取启动器版本信息
+	// 获取启动器版本信息 (异步)
 	go func() {
 		latestVer := launcher.GetLauncherUpdateInfo()
 		if latestVer != "" {
