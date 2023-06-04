@@ -14,7 +14,6 @@ import (
 	"github.com/andybalholm/brotli"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"github.com/pterm/pterm"
 )
 
 func GetCqHttpExec() string {
@@ -92,7 +91,7 @@ func PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp string) {
 	os.Remove(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"))
 }
 
-func UnPackCQHttpRunAuth() {
+func UnPackCQHttpRunAuth() bool {
 	fileName := path.Join(fastbuilder.GetOmegaStorageDir(), "上传这个文件到云服务器以使用云服务器的群服互通.data")
 	if utils.IsFile(fileName) {
 		var fp *os.File
@@ -117,7 +116,7 @@ func UnPackCQHttpRunAuth() {
 		if utils.IsFile(uuidFile) {
 			if thisUUidBytes, err := utils.GetFileData(uuidFile); err == nil {
 				if string(thisUUidBytes) == string(uuidBytes) {
-					return
+					return false
 				}
 			}
 		}
@@ -136,7 +135,9 @@ func UnPackCQHttpRunAuth() {
 			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")); err != nil {
 				panic(err)
 			}
-			pterm.Success.Println("导入应该成功了")
+			// pterm.Success.Println("导入应该成功了")
+			return true
 		}
 	}
+	return false
 }

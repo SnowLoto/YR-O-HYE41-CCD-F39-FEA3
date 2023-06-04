@@ -88,7 +88,7 @@ func main() {
 	fastbuilder.FBTokenSetup(launcherConfig)
 	// 配置租赁服登录 (如果不为空且选择使用上次配置, 则跳过setup)
 	if !(launcherConfig.RentalCode != "" && utils.GetInputYN(fmt.Sprintf("要使用上次 %s 的租赁服配置吗?", launcherConfig.RentalCode))) {
-		fastbuilder.RentalServerSetup(launcherConfig)
+		launcher.RentalServerSetup(launcherConfig)
 	}
 	// 询问是否使用Omega
 	if launcherConfig.StartOmega = utils.GetInputYN("需要启动 Omega 吗?"); launcherConfig.StartOmega {

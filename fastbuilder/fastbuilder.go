@@ -18,12 +18,6 @@ import (
 	"github.com/pterm/pterm"
 )
 
-// 配置租赁服信息
-func RentalServerSetup(cfg *defines.LauncherConfig) {
-	cfg.RentalCode = utils.GetValidInput("请输入租赁服号")
-	cfg.RentalPasswd = utils.GetPswInput("请输入租赁服密码")
-}
-
 // 配置启动参数
 func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
