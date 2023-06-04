@@ -108,3 +108,8 @@ func CopyFile(src, dst string) (nBytes int64, err error) {
 	nBytes, err = io.Copy(destination, source)
 	return nBytes, err
 }
+
+func RemoveFile(src string) bool {
+	err := os.Remove(src)
+	return err == nil
+}

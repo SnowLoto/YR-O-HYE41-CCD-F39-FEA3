@@ -2,6 +2,7 @@ package fastbuilder
 
 import (
 	"encoding/json"
+	"omega_launcher/defines"
 	"omega_launcher/utils"
 	"os"
 	"path/filepath"
@@ -36,6 +37,19 @@ func loadCurrentFBToken() string {
 	return ""
 }
 
+// 删除现有的token
+func deleteCurrentFBToken() bool {
+	// 获取目录
+	homedir, err := os.UserHomeDir()
+	if err != nil {
+		return false
+	}
+	fbconfigdir := filepath.Join(homedir, ".config", "fastbuilder")
+	token := filepath.Join(fbconfigdir, "fbtoken")
+	// 尝试删除token文件
+	return utils.RemoveFile(token)
+}
+
 // 请求token
 func requestToken() string {
 	// 尝试加载现有的token
@@ -45,6 +59,7 @@ func requestToken() string {
 		if utils.GetInputYN("要使用当前设备储存的 Token 吗?") {
 			return currentFbToken
 		}
+		deleteCurrentFBToken()
 	}
 	// 获取新的token
 	Code := utils.GetValidInput("请输入 Fastbuilder 账号, 或者输入 Token")
@@ -64,4 +79,14 @@ func requestToken() string {
 		panic(err)
 	}
 	return string(token)
+}
+
+// 配置Token
+func FBTokenSetup(cfg *defines.LauncherConfig) {
+	if cfg.FBToken != "" {
+		if utils.GetInputYN("要使用上次的 Fastbuilder 账号登录吗?") {
+			return
+		}
+	}
+	cfg.FBToken = requestToken()
 }

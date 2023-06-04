@@ -6,6 +6,7 @@ import (
 	"omega_launcher/cqhttp"
 	"omega_launcher/defines"
 	"omega_launcher/fastbuilder"
+	"omega_launcher/launcher"
 	"omega_launcher/plantform"
 	"omega_launcher/utils"
 	"os"
@@ -42,10 +43,10 @@ func main() {
 	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
 	// 获取启动器版本信息
 	go func() {
-		latestVer := utils.GetLauncherUpdateInfo()
+		latestVer := launcher.GetLauncherUpdateInfo()
 		if latestVer != "" {
 			launcherConfig.LatestVer = latestVer
-			fastbuilder.SaveConfig(launcherConfig)
+			launcher.SaveConfig(launcherConfig)
 		}
 	}()
 	// 版本对比, 不一致时提示更新可用
@@ -103,14 +104,6 @@ func main() {
 			cqhttp.CQHttpEnablerHelper()
 			cqhttp.Run(launcherConfig)
 		}
-	}
-	// 如果使用FB账密认证, 则启动前先保存一次无Token配置
-	if !fastbuilder.IsToken(launcherConfig.FBToken) {
-		cfg := *launcherConfig
-		cfg.FBToken = ""
-		fastbuilder.SaveConfig(&cfg)
-	} else {
-		fastbuilder.SaveConfig(launcherConfig)
 	}
 	// 启动Omega或者FB
 	fastbuilder.Run(launcherConfig)

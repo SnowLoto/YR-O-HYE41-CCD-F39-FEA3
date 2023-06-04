@@ -6,6 +6,7 @@ import (
 	"io"
 	"omega_launcher/defines"
 	"omega_launcher/fastbuilder"
+	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
@@ -30,7 +31,9 @@ func CQHttpEnablerHelper() {
 	initCQConfig()
 }
 
-func Run(botCfg *defines.LauncherConfig) {
+func Run(launcherCfg *defines.LauncherConfig) {
+	// 启动前保存一次配置
+	launcher.SaveConfig(launcherCfg)
 	// 不存在cqhttp目录则退出
 	if !utils.IsDir(GetCQHttpDir()) {
 		panic("cqhttp_storage 目录不存在, 请使用启动器配置一次 go-cqhttp")
@@ -90,7 +93,7 @@ func Run(botCfg *defines.LauncherConfig) {
 	// 等待cqhttp启动完成
 	WaitConnect(availableAddress)
 	// 配置完成后, 根据设置决定是否关闭go-cqhttp输出
-	if botCfg.BlockCQHttpOutput {
+	if launcherCfg.BlockCQHttpOutput {
 		pterm.Warning.Println("将屏蔽 go-cqhttp 的输出内容")
 		stopOutput = true
 	}

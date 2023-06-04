@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"omega_launcher/defines"
+	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
@@ -17,31 +18,14 @@ import (
 	"github.com/pterm/pterm"
 )
 
-// 保存配置文件
-func SaveConfig(cfg *defines.LauncherConfig) {
-	if err := utils.WriteJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), cfg); err != nil {
-		pterm.Error.Println("无法记录配置, 不过可能不是什么大问题")
-	}
-}
-
-// 配置Token
-func FBTokenSetup(cfg *defines.LauncherConfig) {
-	if cfg.FBToken != "" {
-		if utils.GetInputYN("要使用上次的 Fastbuilder 账号登录吗?") {
-			return
-		}
-	}
-	cfg.FBToken = requestToken()
-}
-
 // 配置租赁服信息
 func RentalServerSetup(cfg *defines.LauncherConfig) {
 	cfg.RentalCode = utils.GetValidInput("请输入租赁服号")
 	cfg.RentalPasswd = utils.GetPswInput("请输入租赁服密码")
 }
 
+// 配置启动参数
 func setupCmdArgs(cfg *defines.LauncherConfig) []string {
-	// 配置启动参数
 	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
 	if cfg.RentalPasswd != "" {
@@ -56,12 +40,14 @@ func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 }
 
 func Run(cfg *defines.LauncherConfig) {
+	// 启动前保存一次配置
+	launcher.SaveConfig(cfg)
 	// 读取验证服务器返回的Token并保存
 	go func() {
 		for {
-			cfg.FBToken = loadCurrentFBToken()
-			if cfg.FBToken != "" {
-				SaveConfig(cfg)
+			if currentToken := loadCurrentFBToken(); currentToken != "" {
+				cfg.FBToken = currentToken
+				launcher.SaveConfig(cfg)
 			}
 			time.Sleep(time.Second)
 		}
