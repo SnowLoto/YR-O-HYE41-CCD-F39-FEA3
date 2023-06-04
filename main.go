@@ -37,11 +37,9 @@ func main() {
 		panic(err)
 	}
 	// 启动
-	// 读取配置出错则退出
+	// 读取配置
 	launcherConfig := &defines.LauncherConfig{}
-	if err := utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig); err != nil {
-		panic(err)
-	}
+	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
 	// 版本对比, 不一致时提示更新可用
 	verInfo := "Omega Launcher" + pterm.Yellow(" (", string(version), ")")
 	currentVer := string(version)
