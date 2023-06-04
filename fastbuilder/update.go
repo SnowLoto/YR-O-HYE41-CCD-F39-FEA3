@@ -18,7 +18,7 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
 			"当前可选择的仓库有：\n",
-			"1. 官方仓库 (推荐)\n",
+			"1. 官方仓库"+pterm.Yellow(" (推荐)\n"),
 			"2. 官方镜像仓库\n",
 			"3. 海的官方镜像仓库\n",
 			"4. rnhws-Team 预览版仓库\n",
@@ -28,13 +28,13 @@ func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
 	}
 	switch cfg.Repo {
 	case 1:
-		pterm.Info.Printfln("将使用官方仓库 (%s) 进行更新", defines.OFFICIAL_REPO)
+		pterm.Info.Printfln("将使用 官方仓库 (%s) 进行更新", defines.OFFICIAL_REPO)
 		STORAGE_REPO = defines.OFFICIAL_REPO
 	case 2:
-		pterm.Info.Printfln("将使用官方镜像仓库 (%s) 进行更新", defines.OFFICIAL_REPO_MIRROR)
+		pterm.Info.Printfln("将使用 官方镜像仓库 (%s) 进行更新", defines.OFFICIAL_REPO_MIRROR)
 		STORAGE_REPO = defines.OFFICIAL_REPO_MIRROR
 	case 3:
-		pterm.Info.Printfln("将使用海的官方镜像仓库 (%s) 进行更新", defines.SEA_REPO)
+		pterm.Info.Printfln("将使用 海的官方镜像仓库 (%s) 进行更新", defines.SEA_REPO)
 		STORAGE_REPO = defines.SEA_REPO
 	case 4:
 		pterm.Info.Printfln("将使用 rnhws-Team 预览版仓库 (%s) 进行更新", defines.RNHWS_TEAM_REPO)

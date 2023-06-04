@@ -50,7 +50,7 @@ func requestToken() string {
 	Code := utils.GetValidInput("请输入 Fastbuilder 账号, 或者输入 Token")
 	// 输入token则直接返回
 	if IsToken(Code) {
-		pterm.Success.Println("输入内容为 FBToken")
+		pterm.Success.Println("输入内容为 Token")
 		return Code
 	}
 	// 根据输入信息构建新token

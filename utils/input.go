@@ -34,7 +34,7 @@ func GetValidInput(text string) string {
 		ConfPrinter.Print(text, ": ")
 		result := GetInput()
 		if result == "" {
-			pterm.Error.Println("无效输入，输入不能为空")
+			pterm.Error.Println("无效输入, 输入不能为空")
 			continue
 		}
 		return result
@@ -88,11 +88,11 @@ func GetIntInputInScope(text string, a, b int) int {
 		s := GetValidInput(text)
 		num, err := strconv.Atoi(s)
 		if err != nil {
-			pterm.Error.Println("只能输入数字，请重新输入")
+			pterm.Error.Println("只能输入数字, 请重新输入")
 			continue
 		}
 		if num < a || num > b {
-			pterm.Error.Printfln("只能输入%d到%d之间的整数，请重新输入", a, b)
+			pterm.Error.Printfln("只能输入%d到%d之间的整数, 请重新输入", a, b)
 			continue
 		}
 		return num

@@ -17,7 +17,7 @@ func DownloadSmallContent(sourceUrl string) []byte {
 	// Get the data
 	resp, err := http.Get(sourceUrl)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("从指定仓库下载资源时出现错误，请重试或更换仓库")
+		pterm.Fatal.WithFatal(false).Println("从指定仓库下载资源时出现错误, 请重试或更换仓库")
 		panic(err)
 	}
 	defer resp.Body.Close()
@@ -29,7 +29,7 @@ func DownloadSmallContent(sourceUrl string) []byte {
 	bar := pb.Full.Start64(downloadSize)
 	bar.SetWidth(-1)
 	bar.SetMaxWidth(100)
-	bar.SetRefreshRate(time.Millisecond)
+	bar.SetRefreshRate(time.Nanosecond)
 	defer bar.Finish()
 
 	// Reader
