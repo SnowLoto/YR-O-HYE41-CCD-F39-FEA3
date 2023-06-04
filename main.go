@@ -40,6 +40,14 @@ func main() {
 	// 读取配置
 	launcherConfig := &defines.LauncherConfig{}
 	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
+	// 获取启动器版本信息
+	go func() {
+		latestVer := utils.GetLauncherUpdateInfo()
+		if latestVer != "" {
+			launcherConfig.LatestVer = latestVer
+			fastbuilder.SaveConfig(launcherConfig)
+		}
+	}()
 	// 版本对比, 不一致时提示更新可用
 	verInfo := "Omega Launcher" + pterm.Yellow(" (", string(version), ")")
 	currentVer := string(version)

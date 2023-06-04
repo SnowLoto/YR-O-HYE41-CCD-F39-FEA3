@@ -56,16 +56,16 @@ func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 }
 
 func Run(cfg *defines.LauncherConfig) {
-	// 获取启动器版本信息
+	// 读取验证服务器返回的Token并保存
 	go func() {
-		latestVer := utils.GetLauncherUpdateInfo()
-		if latestVer != "" {
-			cfg.LatestVer = latestVer
-			SaveConfig(cfg)
+		for {
+			cfg.FBToken = loadCurrentFBToken()
+			if cfg.FBToken != "" {
+				SaveConfig(cfg)
+			}
+			time.Sleep(time.Second)
 		}
 	}()
-	// 启动成功提示语
-	successTip := "已成功进入租赁服"
 	// 获取命令args
 	args := setupCmdArgs(cfg)
 	// 建立频道
@@ -115,10 +115,6 @@ func Run(cfg *defines.LauncherConfig) {
 		if err != nil {
 			panic(err)
 		}
-		// 仅启动 FB 时需要额外提示
-		if !cfg.StartOmega {
-			omega_in.Write([]byte("say " + successTip + "\n"))
-		}
 		// 从管道中获取并打印Fastbuilder错误内容
 		go func() {
 			reader := bufio.NewReader(omega_err)
@@ -144,7 +140,7 @@ func Run(cfg *defines.LauncherConfig) {
 			for {
 				readString, err := reader.ReadString('\n')
 				readString = strings.TrimPrefix(readString, "> ")
-				if readString == "\n" || readString == lastInput+"\n" || readString == "say "+successTip+"\n" {
+				if readString == "\n" || readString == lastInput+"\n" {
 					lastInput = ""
 					continue
 				}
@@ -153,15 +149,6 @@ func Run(cfg *defines.LauncherConfig) {
 					return
 				}
 				fmt.Print(readString + "\033[0m")
-				// 成功启动后处理
-				if !isStarted && (readString == successTip+"\n" || readString == "Starting Omega in a second\n") {
-					isStarted = true
-					// 读取验证服务器返回的Token并保存
-					cfg.FBToken = loadCurrentFBToken()
-					if cfg.FBToken != "" {
-						SaveConfig(cfg)
-					}
-				}
 			}
 		}()
 		// 在未收到停止信号前, 启动器会一直将控制台输入的内容通过管道发送给Fastbuilder
