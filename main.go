@@ -51,13 +51,11 @@ func main() {
 	pterm.Info.Println(verInfo)
 	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 询问是否使用上一次的配置
-	if launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
+	if fastbuilder.CheckExecFile() && launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
 		if utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10) {
 			// 更新FB
 			if launcherConfig.UpdateFB {
 				fastbuilder.Update(launcherConfig, false)
-			} else {
-				fastbuilder.CheckExecFile()
 			}
 			// go-cqhttp
 			if launcherConfig.EnableCQHttp && launcherConfig.StartOmega {
@@ -71,8 +69,11 @@ func main() {
 	// 配置FB更新
 	if launcherConfig.UpdateFB = utils.GetInputYN("需要启动器帮忙下载或更新 Fastbuilder 吗?"); launcherConfig.UpdateFB {
 		fastbuilder.Update(launcherConfig, true)
-	} else {
-		fastbuilder.CheckExecFile()
+	}
+	// 检查是否已下载FB
+	if !fastbuilder.CheckExecFile() {
+		pterm.Warning.Printfln("当前目录不存在文件名为 " + fastbuilder.GetFBExecName() + " 的 Fastbuilder")
+		fastbuilder.Update(launcherConfig, true)
 	}
 	// 配置FB
 	fastbuilder.FBTokenSetup(launcherConfig)

@@ -71,11 +71,9 @@ func getRemoteFBHash(url string) string {
 	return hash
 }
 
-// 检查当前目录是否存在FB执行文件, 不存在时将会panic
-func CheckExecFile() {
-	if !utils.IsFile(getFBExecPath()) {
-		panic("当前目录不存在文件名为 " + GetFBExecName() + " 的 Fastbuilder")
-	}
+// 检查当前目录是否存在FB执行文件
+func CheckExecFile() bool {
+	return utils.IsFile(getFBExecPath())
 }
 
 func GetOmegaStorageDir() string {
