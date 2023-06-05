@@ -51,8 +51,7 @@ func main() {
 	}()
 	// 版本对比, 不一致时提示更新可用
 	verInfo := "Omega Launcher" + pterm.Yellow(" (", string(version), ")")
-	currentVer := string(version)
-	if currentVer != launcherConfig.LatestVer && launcherConfig.LatestVer != "" {
+	if utils.HasGreaterVer(string(version), launcherConfig.LatestVer) {
 		verInfo += pterm.Yellow(" (更新可用)")
 	}
 	// 添加启动信息
