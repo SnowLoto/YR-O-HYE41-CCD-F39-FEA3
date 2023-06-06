@@ -18,7 +18,7 @@ import (
 
 func GetCqHttpExec() string {
 	cqhttp := "cqhttp"
-	if plantform.GetPlantform() == plantform.WINDOWS_x86_64 {
+	if plantform.GetPlantform() == plantform.WINDOWS_x86_64 || plantform.GetPlantform() == plantform.WINDOWS_arm64 {
 		cqhttp = "cqhttp.exe"
 	}
 	cqhttp = path.Join(utils.GetCurrentDir(), cqhttp)
