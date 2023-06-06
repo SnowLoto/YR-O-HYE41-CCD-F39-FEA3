@@ -18,7 +18,7 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
     && echo "#!/bin/bash" >> /ome/launcher_liliya \
     && echo "sleep 1" >> /ome/launcher_liliya \
     && echo "clear" >> /ome/launcher_liliya \
-    && echo 'echo -e "\033[1;33m注意: 如果使用MCSM, 请在终端设置中打开仿真终端，并直接在命令行中输入内容\033[0m"' >> /ome/launcher_liliya \
+    && echo 'echo -e "\033[1;33m注意: 如果使用MCSM, 请在终端设置中打开仿真终端, 并直接在命令行中输入内容\033[0m"' >> /ome/launcher_liliya \
     && echo "cd /workspace" >> /ome/launcher_liliya \
     && echo "/ome/omega_launcher_linux_amd64" >> /ome/launcher_liliya \
     && chmod +x /ome/launcher_liliya \
