@@ -55,7 +55,7 @@ func Run(launcherCfg *defines.LauncherConfig) {
 	qGroupCfgFp, qGuildCfgFp := updateOmegaConfigAddress(availableAddress)
 	updateCQConfigAddress(availableAddress)
 	// 配置启动参数
-	args := []string{"-faststart"}
+	args := []string{"-faststart", "-update-protocol"}
 	// 配置执行目录
 	cmd := exec.Command(GetCqHttpExec(), args...)
 	cmd.Dir = path.Join(GetCQHttpDir())
