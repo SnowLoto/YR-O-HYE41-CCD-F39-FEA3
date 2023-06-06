@@ -21,14 +21,15 @@ func CQHttpEnablerHelper() {
 		panic("无法创建 cqhttp_storage 目录")
 	}
 	// 导入配置, 成功则跳过初始化操作
-	if !UnPackCQHttpRunAuth() {
-		// 如果go-cqhttp配置文件存在, 且用户选择使用, 则跳过初始化操作
-		if cqCfg := getCQConfig(); cqCfg != nil {
-			if !utils.GetInputYN("已读取到 go-cqhttp 配置文件, 要使用吗?") {
-				initCQConfig()
-			}
-		}
+	if UnPackCQHttpRunAuth() {
+		return
 	}
+	// 如果go-cqhttp配置文件存在, 且用户选择使用, 则跳过初始化操作
+	if getCQConfig() != nil && utils.GetInputYN("要使用现有的 go-cqhttp 配置文件吗?") {
+		return
+	}
+	// 初始化配置文件
+	initCQConfig()
 }
 
 func Run(launcherCfg *defines.LauncherConfig) {
