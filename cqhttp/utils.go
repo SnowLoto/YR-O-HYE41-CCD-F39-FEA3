@@ -74,7 +74,7 @@ func PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp string) {
 	if _, err := utils.CopyFile(qGroupLinkFp, path.Join(GetCQHttpDir(), "组件-群服互通.json")); err != nil {
 		panic(err)
 	}
-	if _, err := utils.CopyFile(qGuildLinkFp, path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json")); err != nil {
+	if _, err := utils.CopyFile(qGuildLinkFp, path.Join(GetCQHttpDir(), "组件-频服互通.json")); err != nil {
 		panic(err)
 	}
 	fileName := path.Join(fastbuilder.GetOmegaStorageDir(), "上传这个文件到云服务器以使用云服务器的群服互通.data")
@@ -88,7 +88,7 @@ func PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp string) {
 	}
 	fp.Close()
 	os.Remove(path.Join(GetCQHttpDir(), "组件-群服互通.json"))
-	os.Remove(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"))
+	os.Remove(path.Join(GetCQHttpDir(), "组件-频服互通.json"))
 }
 
 func UnPackCQHttpRunAuth() bool {
@@ -129,12 +129,8 @@ func UnPackCQHttpRunAuth() bool {
 			if err := utils.UnZip(bytes.NewReader(zipData), unzipSize, GetCQHttpDir()); err != nil {
 				panic(err)
 			}
-			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-群服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json")); err != nil {
-				panic(err)
-			}
-			if _, err := utils.CopyFile(path.Join(GetCQHttpDir(), "组件-第三方__Liliya233__频服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json")); err != nil {
-				panic(err)
-			}
+			utils.CopyFile(path.Join(GetCQHttpDir(), "组件-群服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json"))
+			utils.CopyFile(path.Join(GetCQHttpDir(), "组件-频服互通.json"), path.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json"))
 			// pterm.Success.Println("导入应该成功了")
 			return true
 		}
