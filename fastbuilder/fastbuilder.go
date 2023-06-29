@@ -54,7 +54,7 @@ func Run(cfg *defines.LauncherConfig) {
 	// 持续将输入信息输入到频道中
 	go func() {
 		for {
-			s := utils.GetInput()
+			s := utils.ReadLine()
 			readC <- s
 		}
 	}()

@@ -23,16 +23,24 @@ var ConfPrinter = pterm.PrefixPrinter{
 	},
 }
 
-func GetInput() string {
+func ReadLine() string {
 	buf := bufio.NewReader(os.Stdin)
 	l, _, _ := buf.ReadLine()
 	return string(strings.TrimSpace(string(l)))
 }
 
+func GetInput(text string) string {
+	for {
+		ConfPrinter.Print(text, ": ")
+		result := ReadLine()
+		return result
+	}
+}
+
 func GetValidInput(text string) string {
 	for {
 		ConfPrinter.Print(text, ": ")
-		result := GetInput()
+		result := ReadLine()
 		if result == "" {
 			pterm.Error.Println("无效输入, 输入不能为空")
 			continue
@@ -93,6 +101,18 @@ func GetIntInputInScope(text string, a, b int) int {
 		}
 		if num < a || num > b {
 			pterm.Error.Printfln("只能输入%d到%d之间的整数, 请重新输入", a, b)
+			continue
+		}
+		return num
+	}
+}
+
+func GetInt64Input(text string) int64 {
+	for {
+		s := GetValidInput(text)
+		num, err := strconv.ParseInt(s, 10, 64)
+		if err != nil {
+			pterm.Error.Println("只能输入数字, 请重新输入")
 			continue
 		}
 		return num
