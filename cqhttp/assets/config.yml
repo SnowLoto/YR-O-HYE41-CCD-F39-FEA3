@@ -26,6 +26,9 @@ account: # 账号相关
   # 服务器可使用docker在本地搭建或者使用他人开放的服务
   sign-server: '[SignServer地址]'
 
+  # 签名服务器的注册密钥, 兼容版本为v1.1.2, 启动器将其修改为233233以确保匹配
+  sign-server-key: '233233'
+
 heartbeat:
   # 心跳频率, 单位秒
   # -1 为关闭心跳

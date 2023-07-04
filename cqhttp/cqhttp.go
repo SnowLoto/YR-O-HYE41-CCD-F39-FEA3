@@ -33,8 +33,6 @@ func CQHttpEnablerHelper() {
 }
 
 func Run(launcherCfg *defines.LauncherConfig) {
-	// 启动前保存一次配置
-	launcher.SaveConfig(launcherCfg)
 	// 不存在cqhttp目录则退出
 	if !utils.IsDir(GetCQHttpDir()) {
 		panic("cqhttp_storage 目录不存在, 请使用启动器配置一次 go-cqhttp")
@@ -54,7 +52,18 @@ func Run(launcherCfg *defines.LauncherConfig) {
 	}
 	availableAddress := fmt.Sprintf("127.0.0.1:%d", port)
 	qGroupCfgFp, qGuildCfgFp := updateOmegaConfigAddress(availableAddress)
-	updateCQConfigAddress(availableAddress)
+	// 是否启动 Sign Server
+	startingSignServerAddress := ""
+	if launcherCfg.EnableSignServer {
+		if launcherCfg.SignServerSoVersion == "" {
+			launcherCfg.SignServerSoVersion = "8.9.63"
+		}
+		startingSignServerAddress = SignServerStart(launcherCfg.SignServerSoVersion)
+	}
+	// 更新cq配置
+	updateCQConfigAddress(availableAddress, startingSignServerAddress)
+	// 启动前保存一次启动器配置
+	launcher.SaveConfig(launcherCfg)
 	// 配置启动参数
 	args := []string{"-faststart", "-update-protocol"}
 	// 配置执行目录

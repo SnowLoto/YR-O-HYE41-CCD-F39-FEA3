@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 func IsDir(path string) bool {
@@ -41,6 +42,7 @@ func GetFileData(fname string) ([]byte, error) {
 }
 
 func WriteFileData(fname string, data []byte) error {
+	MkDir(filepath.Dir(fname))
 	fp, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
@@ -112,4 +114,8 @@ func CopyFile(src, dst string) (nBytes int64, err error) {
 func RemoveFile(src string) bool {
 	err := os.Remove(src)
 	return err == nil
+}
+
+func GetCacheDir() string {
+	return filepath.Join(GetCurrentDir(), "launcher_cache")
 }

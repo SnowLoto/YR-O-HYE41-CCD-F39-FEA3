@@ -11,12 +11,10 @@ import (
 )
 
 // 获取FB文件名
-func GetFBExecName() string {
-	name := ""
+func GetFBExecName() (name string) {
 	switch plantform.GetPlantform() {
 	case plantform.WINDOWS_arm64:
 		// 不存在该构建
-		name = ""
 	case plantform.WINDOWS_x86_64:
 		name = "phoenixbuilder-windows-executable-x86_64.exe"
 	case plantform.Linux_arm64:

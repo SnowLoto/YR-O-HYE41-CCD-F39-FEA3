@@ -15,7 +15,7 @@ func DownloadSmallContent(sourceUrl string) []byte {
 	// Get the data
 	resp, err := http.Get(sourceUrl)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("从指定仓库下载资源时出现错误, 请重试或更换仓库")
+		pterm.Fatal.WithFatal(false).Println("下载资源时出现错误")
 		panic(err)
 	}
 	defer resp.Body.Close()
