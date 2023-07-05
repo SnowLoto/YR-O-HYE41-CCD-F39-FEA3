@@ -9,7 +9,6 @@ import (
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -18,7 +17,6 @@ import (
 )
 
 var (
-	soDownloadUrl         = "https://www.omega-download.top/https://raw.githubusercontent.com/fuqiuluo/unidbg-fetch-qsign/master/txlib/"
 	signServerDownloadUrl = "https://www.omega-download.top/https://github.com/fuqiuluo/unidbg-fetch-qsign/releases/latest/download/"
 )
 
@@ -54,27 +52,6 @@ func checkHTTPConnection(url string) bool {
 	defer resp.Body.Close()
 
 	return resp.StatusCode == http.StatusOK
-}
-
-func downloadSoFile(version string) {
-	fileList := []string{
-		"/libQSec.so",
-		"/libfekit.so",
-		"/config.json",
-		"/dtconfig.json",
-	}
-	pterm.Warning.Printfln("正在检查并下载 Sign Server 所需的文件..")
-	for _, file := range fileList {
-		filePath := path.Join(utils.GetCacheDir(), "SignServer", "txlib", version, file)
-		if utils.IsFile(filePath) {
-			continue
-		}
-		content := utils.DownloadSmallContent(soDownloadUrl + version + file)
-		if err := utils.WriteFileData(filePath, content); err != nil {
-			pterm.Warning.Printfln("下载 Sign Server 所需文件时出现错误")
-			panic(err)
-		}
-	}
 }
 
 func getSignServerCache() (string, []byte) {
@@ -114,8 +91,7 @@ func signServerDeploy() string {
 	return dirName
 }
 
-func setupConfig(version string, host string, port int, uin int64, androidID string) {
-	configPath := filepath.Join(utils.GetCacheDir(), "SignServer", "txlib", version, "config.json")
+func setupConfig(configPath string, host string, port int, uin int64, androidID string) {
 	// 读取配置文件
 	configBytes, err := utils.GetFileData(configPath)
 	if err != nil {
@@ -163,20 +139,20 @@ func SignServerStart(soVersion string) string {
 		return ""
 	}
 	signServerDirName := signServerDeploy()
-	downloadSoFile(soVersion)
 	availablePort, err := utils.GetAvailablePort()
 	if err != nil {
 		pterm.Error.Println("无法获取可用的端口来启动 Sign Server: " + err.Error())
 		return ""
 	}
 	if cqCfg := getCQConfig(); cqCfg != nil {
-		setupConfig(soVersion, "0.0.0.0", availablePort, cqCfg.Account.Uin, device.AndroidId)
+		configPath := filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "txlib", soVersion, "config.json")
+		setupConfig(configPath, "0.0.0.0", availablePort, cqCfg.Account.Uin, device.AndroidId)
 	} else {
 		pterm.Error.Println("Sign Server 启动失败, 未能够从 go-cqhttp 配置文件中获取QQ账号")
 		return ""
 	}
 	args := []string{
-		fmt.Sprintf("--basePath=%s", path.Join(utils.GetCacheDir(), "SignServer", "txlib", soVersion)),
+		fmt.Sprintf("--basePath=%s", filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "txlib", soVersion)),
 	}
 	// 如果不是Windows则去掉.bat
 	cmdStr := filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "bin", "unidbg-fetch-qsign.bat")
