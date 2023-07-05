@@ -202,6 +202,7 @@ func SignServerStart(soVersion string) string {
 			if err != nil {
 				pterm.Error.Println(err)
 			}
+			cmd.Process.Kill()
 			pterm.Warning.Println("重新启动 Sign Server..")
 		}
 	}()
