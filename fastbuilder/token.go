@@ -13,10 +13,7 @@ import (
 
 // 判断是否为token
 func IsToken(token string) bool {
-	if strings.HasPrefix(token, "w9/BeLNV/") || strings.HasPrefix(token, "w9/abqFz/") {
-		return true
-	}
-	return false
+	return strings.HasPrefix(token, "w9/")
 }
 
 // 加载现有的token
