@@ -20,7 +20,7 @@ import (
 
 // 配置启动参数
 func setupCmdArgs(cfg *defines.LauncherConfig) []string {
-	args := []string{"-M", "--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
+	args := []string{"--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
 	if cfg.RentalPasswd != "" {
 		args = append(args, "-p")
