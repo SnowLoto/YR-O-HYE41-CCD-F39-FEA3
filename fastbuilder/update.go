@@ -77,7 +77,7 @@ func getLatestLibreReleaseVersion() string {
 
 // 仓库选择
 func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
-	if reselect || cfg.Repo < 1 || cfg.Repo > 6 {
+	if reselect || cfg.Repo < 1 || cfg.Repo > 8 {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
 			"当前可选择的仓库有：\n",
