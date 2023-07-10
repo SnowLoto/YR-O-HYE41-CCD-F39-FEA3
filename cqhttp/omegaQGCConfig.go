@@ -32,7 +32,7 @@ func updateOmegaConfigAddress(address string) (qGroupCfgFp, qGuildCfgFp string) 
 	hasQGroupCfg, hasQGuildCfg := false, false
 	// 尝试从配置文件夹下寻找全部频服互通配置文件
 	utils.MkDir(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
-	if err := filepath.Walk(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置"), func(filepath string, info fs.FileInfo, err error) error {
+	if err := filepath.Walk(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置"), func(path string, info fs.FileInfo, err error) error {
 		// 跳过目录
 		if info.IsDir() {
 			return nil
@@ -44,7 +44,7 @@ func updateOmegaConfigAddress(address string) (qGroupCfgFp, qGuildCfgFp string) 
 		}
 		// 对配置文件进行解析
 		currentCfg := &OmegaComponentConfig{}
-		if parseErr := utils.GetJsonData(filepath, currentCfg); parseErr != nil {
+		if parseErr := utils.GetJsonData(path, currentCfg); parseErr != nil {
 			return nil
 		}
 		// 如果不是频服互通组件, 则跳过
@@ -53,14 +53,14 @@ func updateOmegaConfigAddress(address string) (qGroupCfgFp, qGuildCfgFp string) 
 		}
 		// 更新并写入IP地址
 		currentCfg.Configs["CQHTTP正向Websocket代理地址"] = address
-		writeOmegaConfig(filepath, currentCfg)
+		writeOmegaConfig(path, currentCfg)
 		// 记录信息
 		if currentCfg.Name == "群服互通" {
 			hasQGroupCfg = true
-			qGroupCfgFp = filepath
+			qGroupCfgFp = path
 		} else {
 			hasQGuildCfg = true
-			qGuildCfgFp = filepath
+			qGuildCfgFp = path
 		}
 		return nil
 	}); err != nil {
