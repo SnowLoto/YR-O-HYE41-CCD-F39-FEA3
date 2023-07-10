@@ -2,7 +2,7 @@ package fastbuilder
 
 import (
 	"encoding/json"
-	"omega_launcher/defines"
+	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
 	"path/filepath"
@@ -79,7 +79,7 @@ func requestToken() string {
 }
 
 // 配置Token
-func FBTokenSetup(cfg *defines.LauncherConfig) {
+func FBTokenSetup(cfg *launcher.Config) {
 	if cfg.FBToken != "" {
 		if utils.GetInputYN("要使用上次的 Fastbuilder 账号登录吗?") {
 			return

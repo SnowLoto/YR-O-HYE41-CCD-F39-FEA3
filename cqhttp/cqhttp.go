@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"omega_launcher/defines"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
@@ -32,7 +31,7 @@ func CQHttpEnablerHelper() {
 	initCQConfig()
 }
 
-func Run(launcherCfg *defines.LauncherConfig) {
+func Run(launcherCfg *launcher.Config) {
 	// 不存在cqhttp目录则退出
 	if !utils.IsDir(GetCQHttpDir()) {
 		panic("cqhttp_storage 目录不存在, 请使用启动器配置一次 go-cqhttp")

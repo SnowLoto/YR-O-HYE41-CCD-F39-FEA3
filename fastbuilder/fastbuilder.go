@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"omega_launcher/defines"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
@@ -19,7 +18,7 @@ import (
 )
 
 // 配置启动参数
-func setupCmdArgs(cfg *defines.LauncherConfig) []string {
+func setupCmdArgs(cfg *launcher.Config) []string {
 	args := []string{"--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
 	if cfg.RentalPasswd != "" {
@@ -33,7 +32,7 @@ func setupCmdArgs(cfg *defines.LauncherConfig) []string {
 	return args
 }
 
-func Run(cfg *defines.LauncherConfig) {
+func Run(cfg *launcher.Config) {
 	// 启动前保存一次配置
 	launcher.SaveConfig(cfg)
 	// 读取验证服务器返回的Token并保存

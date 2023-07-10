@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"omega_launcher/cqhttp"
-	"omega_launcher/defines"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/launcher"
 	"omega_launcher/plantform"
@@ -39,7 +38,7 @@ func main() {
 	}
 	// 启动
 	// 读取配置
-	launcherConfig := &defines.LauncherConfig{}
+	launcherConfig := &launcher.Config{}
 	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
 	// 获取启动器版本信息 (异步)
 	go func() {
@@ -87,7 +86,8 @@ func main() {
 	fastbuilder.FBTokenSetup(launcherConfig)
 	// 配置租赁服登录 (如果不为空且选择使用上次配置, 则跳过setup)
 	if !(launcherConfig.RentalCode != "" && utils.GetInputYN(fmt.Sprintf("要使用上次 %s 的租赁服配置吗?", launcherConfig.RentalCode))) {
-		launcher.RentalServerSetup(launcherConfig)
+		launcherConfig.RentalCode = utils.GetValidInput("请输入租赁服号")
+		launcherConfig.RentalPasswd = utils.GetPswInput("请输入租赁服密码")
 	}
 	// 询问是否使用Omega
 	if launcherConfig.StartOmega = utils.GetInputYN("需要启动 Omega 吗?"); launcherConfig.StartOmega {

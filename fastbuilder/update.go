@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"omega_launcher/defines"
+	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"time"
 
@@ -76,7 +76,7 @@ func getLatestLibreReleaseVersion() string {
 }
 
 // 仓库选择
-func selectRepo(cfg *defines.LauncherConfig, reselect bool) {
+func selectRepo(cfg *launcher.Config, reselect bool) {
 	if reselect || cfg.Repo < 1 || cfg.Repo > 8 {
 		// 不再于列表提示自用仓库
 		utils.ConfPrinter.Println(
@@ -141,7 +141,7 @@ func download() {
 }
 
 // 升级FB
-func Update(cfg *defines.LauncherConfig, reselect bool) {
+func Update(cfg *launcher.Config, reselect bool) {
 	selectRepo(cfg, reselect)
 	pterm.Warning.Println("正在从指定仓库获取更新信息..")
 	if getRemoteFBHash(STORAGE_REPO) == getCurrentFBHash() {
