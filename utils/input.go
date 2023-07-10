@@ -5,13 +5,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"atomicgo.dev/keyboard"
 	"atomicgo.dev/keyboard/keys"
 	"github.com/pterm/pterm"
-	"golang.org/x/term"
 )
 
 // CONF, 与 INFO 相似的样式
@@ -50,13 +48,11 @@ func GetValidInput(text string) string {
 }
 
 func GetPswInput(text string) string {
-	ConfPrinter.Printf(text + " (不会回显): ")
-	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	pterm.Println()
+	result, err := pterm.DefaultInteractiveTextInput.WithMask("*").Show(ConfPrinter.Sprintf(text + " (不会回显)"))
 	if err != nil {
 		panic(err)
 	}
-	return string(bytePassword)
+	return result
 }
 
 func GetInputYN(text string) bool {
