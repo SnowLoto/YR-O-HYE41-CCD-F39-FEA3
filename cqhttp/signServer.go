@@ -59,7 +59,7 @@ func getSignServerCache() (string, []byte) {
 	var release struct {
 		TagName string `json:"tag_name"`
 	}
-	err := json.Unmarshal(utils.DownloadSmallContent("https://api.github.com/repos/fuqiuluo/unidbg-fetch-qsign/releases/latest"), &release)
+	err := json.Unmarshal(utils.DownloadBytes("https://api.github.com/repos/fuqiuluo/unidbg-fetch-qsign/releases/latest"), &release)
 	if err != nil {
 		pterm.Error.Println("检查 Sign Server 更新时出现问题")
 		panic(err)
@@ -76,7 +76,7 @@ func signServerDeploy() string {
 	fileName, fileContent := getSignServerCache()
 	if len(fileContent) == 0 {
 		pterm.Warning.Printfln("正在下载 Sign Server 可执行文件..")
-		fileContent = utils.DownloadSmallContent(signServerDownloadUrl + fileName)
+		fileContent = utils.DownloadBytes(signServerDownloadUrl + fileName)
 		utils.WriteFileData(filepath.Join(utils.GetCacheDir(), "downloads", fileName), fileContent)
 	}
 	dirName := strings.TrimSuffix(fileName, ".zip")

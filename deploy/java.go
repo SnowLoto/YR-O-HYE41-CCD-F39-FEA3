@@ -43,7 +43,7 @@ func getJavaCache(fileName string) []byte {
 		return nil
 	}
 	pterm.Warning.Printfln("正在检查 Java 运行环境文件..")
-	if string(utils.DownloadSmallContent(javaDownloadUrl+fileName+".sha256")) != utils.GetFileHash(localFilePath) {
+	if string(utils.DownloadBytes(javaDownloadUrl+fileName+".sha256")) != utils.GetFileHash(localFilePath) {
 		return nil
 	}
 	result, err := utils.GetFileData(localFilePath)
@@ -66,7 +66,7 @@ func JavaDeploy() {
 	fileContent := getJavaCache(fileName)
 	if fileContent == nil {
 		pterm.Warning.Printfln("正在下载 Java 运行环境文件..")
-		fileContent = utils.DownloadSmallContent(javaDownloadUrl + fileName)
+		fileContent = utils.DownloadBytes(javaDownloadUrl + fileName)
 		utils.WriteFileData(filepath.Join(utils.GetCacheDir(), "downloads", fileName), fileContent)
 	}
 	pterm.Warning.Printfln("正在解压 Java 运行环境文件..")

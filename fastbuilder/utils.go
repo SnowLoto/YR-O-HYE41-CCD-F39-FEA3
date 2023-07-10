@@ -52,7 +52,7 @@ func getCurrentFBHash() string {
 // 获取远程仓库的Hash
 func getRemoteFBHash(url string) string {
 	// 获取文件内容
-	jsonData := utils.DownloadSmallContent(url + "hashes.json")
+	jsonData := utils.DownloadBytes(url + "hashes.json")
 	// 解析文件内容
 	var hash string
 	hashMap := make(map[string]string, 0)

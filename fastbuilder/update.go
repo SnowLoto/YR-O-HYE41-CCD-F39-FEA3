@@ -1,9 +1,7 @@
 package fastbuilder
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"time"
@@ -43,7 +41,7 @@ type release struct {
 func getLatestLibreReleaseVersion() string {
 	pterm.Warning.Printfln("正在获取最新的 Libre-release 版本号..")
 	var releases []release
-	err := json.Unmarshal(utils.DownloadSmallContent("https://api.github.com/repos/LNSSPsd/PhoenixBuilder/releases"), &releases)
+	err := json.Unmarshal(utils.DownloadBytes("https://api.github.com/repos/LNSSPsd/PhoenixBuilder/releases"), &releases)
 	if err != nil {
 		pterm.Error.Println("正在获取最新的 Libre-release 版本号时出现问题")
 		panic(err)
@@ -123,21 +121,7 @@ func selectRepo(cfg *launcher.Config, reselect bool) {
 
 // 下载FB
 func download() {
-	var execBytes []byte
-	var err error
-	// 获取写入路径与远程仓库url
-	path := getFBExecPath()
-	url := STORAGE_REPO + GetFBExecName()
-	// 下载
-	compressedData := utils.DownloadSmallContent(url)
-	// 官网并没有提供brotli, 所以对读取操作进行修改
-	if execBytes, err = io.ReadAll(bytes.NewReader(compressedData)); err != nil {
-		panic(err)
-	}
-	// 写入文件
-	if err := utils.WriteFileData(path, execBytes); err != nil {
-		panic(err)
-	}
+	utils.DownloadFile(STORAGE_REPO+GetFBExecName(), getFBExecPath())
 }
 
 // 升级FB
