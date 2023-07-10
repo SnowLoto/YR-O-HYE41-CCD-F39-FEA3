@@ -11,7 +11,8 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
     && dpkg-reconfigure -f noninteractive tzdata \
     && mkdir /ome && cd /ome \
 #    && wget https://***/res/launcher/omega_launcher_linux_amd64 \
-    && wget https://github.com/Liliya233/omega_launcher/releases/latest/download/omega_launcher_linux_amd64 \
+#    && wget https://github.com/Liliya233/omega_launcher/releases/latest/download/omega_launcher_linux_amd64 \
+    && wget https://www.omega-download.top/https://github.com/Liliya233/omega_launcher/releases/latest/download/omega_launcher_linux_amd64 \
     && chmod +x /ome/omega_launcher_linux_amd64 \
     && mkdir /workspace \
     && apt clean -yq && apt autoclean -yq && apt autoremove -yq && rm -rf /var/lib/apt/lists/* \
