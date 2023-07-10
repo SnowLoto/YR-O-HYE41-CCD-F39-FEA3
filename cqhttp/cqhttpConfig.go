@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"omega_launcher/utils"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 
 	_ "embed"
@@ -32,7 +32,7 @@ type CQHttpConfig struct {
 // 从cqhttp配置里读取QQ账密信息
 func getCQConfig() *CQHttpConfig {
 	cfg := &CQHttpConfig{}
-	data, err := os.ReadFile(path.Join(GetCQHttpDir(), "config.yml"))
+	data, err := os.ReadFile(filepath.Join(GetCQHttpDir(), "config.yml"))
 	if err != nil {
 		return nil
 	}
@@ -44,7 +44,7 @@ func getCQConfig() *CQHttpConfig {
 
 // 写入cqhttp配置
 func writeCQConfig(cfgStr string) {
-	err := utils.WriteFileData(path.Join(GetCQHttpDir(), "config.yml"), []byte(cfgStr))
+	err := utils.WriteFileData(filepath.Join(GetCQHttpDir(), "config.yml"), []byte(cfgStr))
 	if err != nil {
 		pterm.Fatal.WithFatal(false).Println("更新 go-cqhttp 配置文件时遇到问题")
 		panic(err)
@@ -75,8 +75,8 @@ func updateCQConfigAddress(wsAddress, signServerAddress string) {
 // 初始化cqhttp
 func initCQConfig() {
 	// 移除token等文件
-	utils.RemoveFile(path.Join(GetCQHttpDir(), "device.json"))
-	utils.RemoveFile(path.Join(GetCQHttpDir(), "session.token"))
+	utils.RemoveFile(filepath.Join(GetCQHttpDir(), "device.json"))
+	utils.RemoveFile(filepath.Join(GetCQHttpDir(), "session.token"))
 	// 要求输入cqhttp配置信息
 	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", fmt.Sprint(utils.GetInt64Input("请输入QQ账号")), 1)
 	cfgStr = strings.Replace(cfgStr, "[QQ密码]", utils.GetPswInput("请输入QQ密码"), 1)

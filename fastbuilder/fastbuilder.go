@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -77,7 +77,7 @@ func Run(cfg *launcher.Config) {
 		pterm.Success.Println("正在启动 Omega/Fastbuilder")
 		// 启动命令
 		cmd := exec.Command(getFBExecPath(), args...)
-		cmd.Dir = path.Join(utils.GetCurrentDataDir())
+		cmd.Dir = filepath.Join(utils.GetCurrentDataDir())
 		// 由于需要对内容进行处理, 所以不能直接进行io复制
 		// 建立从Fastbuilder到控制台的错误管道
 		omega_err, err := cmd.StderrPipe()

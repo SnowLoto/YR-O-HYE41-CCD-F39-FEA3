@@ -17,8 +17,5 @@ func HasGreaterVer(current, online string) bool {
 		return false
 	}
 	// 版本对比
-	if v1.LessThan(v2) {
-		return true
-	}
-	return false
+	return v1.LessThan(v2)
 }

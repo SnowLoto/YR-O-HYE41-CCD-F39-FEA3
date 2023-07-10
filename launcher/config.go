@@ -2,7 +2,7 @@ package launcher
 
 import (
 	"omega_launcher/utils"
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -27,5 +27,5 @@ func SaveConfig(config *Config) {
 	if strings.HasPrefix(copyConfig.FBToken, "{\"encrypt_token\"") {
 		copyConfig.FBToken = ""
 	}
-	utils.WriteJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), copyConfig)
+	utils.WriteJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), copyConfig)
 }

@@ -9,7 +9,7 @@ import (
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 
 	"github.com/pterm/pterm"
 )
@@ -42,7 +42,7 @@ func Run(launcherCfg *launcher.Config) {
 		panic(err)
 	}
 	// 读取Omega配置
-	utils.MkDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
+	utils.MkDir(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
 	// 配置地址同步
 	port, err := utils.GetAvailablePort()
 	if err != nil {
@@ -67,7 +67,7 @@ func Run(launcherCfg *launcher.Config) {
 	args := []string{"-faststart", "-update-protocol"}
 	// 配置执行目录
 	cmd := exec.Command(GetCqHttpExec(), args...)
-	cmd.Dir = path.Join(GetCQHttpDir())
+	cmd.Dir = filepath.Join(GetCQHttpDir())
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	cqhttp_out, err := cmd.StdoutPipe()

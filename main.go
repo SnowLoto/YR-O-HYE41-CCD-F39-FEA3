@@ -9,7 +9,7 @@ import (
 	"omega_launcher/plantform"
 	"omega_launcher/utils"
 	"os"
-	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/pterm/pterm"
@@ -39,7 +39,7 @@ func main() {
 	// 启动
 	// 读取配置
 	launcherConfig := &launcher.Config{}
-	utils.GetJsonData(path.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
+	utils.GetJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
 	// 获取启动器版本信息 (异步)
 	go func() {
 		latestVer := launcher.GetLauncherUpdateInfo()
@@ -93,7 +93,7 @@ func main() {
 	if launcherConfig.StartOmega = utils.GetInputYN("需要启动 Omega 吗?"); launcherConfig.StartOmega {
 		// 配置群服互通
 		if launcherConfig.EnableCQHttp = utils.GetInputYN("需要启动 go-cqhttp 吗?"); launcherConfig.EnableCQHttp {
-			if !utils.IsDir(path.Join(fastbuilder.GetOmegaStorageDir(), "配置")) {
+			if !utils.IsDir(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置")) {
 				if launcherConfig.EnableCQHttp = utils.GetInputYN("此时配置 go-cqhttp 会导致新生成的组件均为非启用状态, 要继续吗?"); !launcherConfig.EnableCQHttp {
 					// 直接启动Omega或者FB
 					fastbuilder.Run(launcherConfig)

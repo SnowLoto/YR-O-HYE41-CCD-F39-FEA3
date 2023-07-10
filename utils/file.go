@@ -13,6 +13,11 @@ func IsDir(path string) bool {
 	return (err == nil && stat.IsDir())
 }
 
+func IsFile(path string) bool {
+	stat, err := os.Stat(path)
+	return (err == nil && !stat.IsDir())
+}
+
 func MkDir(path string) bool {
 	if !IsDir(path) {
 		err := os.MkdirAll(path, 0755)
@@ -21,11 +26,6 @@ func MkDir(path string) bool {
 		}
 	}
 	return true
-}
-
-func IsFile(path string) bool {
-	stat, err := os.Stat(path)
-	return (err == nil && !stat.IsDir())
 }
 
 func GetFileData(fname string) ([]byte, error) {
@@ -39,6 +39,21 @@ func GetFileData(fname string) ([]byte, error) {
 		return nil, err
 	}
 	return buf, err
+}
+
+func GetJsonData(fname string, ptr interface{}) error {
+	data, err := GetFileData(fname)
+	if err != nil {
+		return err
+	}
+	if len(data) == 0 || data == nil {
+		return nil
+	}
+	err = json.Unmarshal(data, ptr)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func WriteFileData(fname string, data []byte) error {
@@ -64,21 +79,6 @@ func WriteJsonData(fname string, data interface{}) error {
 	enc.SetIndent("", "\t")
 	enc.SetEscapeHTML(false)
 	err = enc.Encode(data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func GetJsonData(fname string, ptr interface{}) error {
-	data, err := GetFileData(fname)
-	if err != nil {
-		return err
-	}
-	if len(data) == 0 || data == nil {
-		return nil
-	}
-	err = json.Unmarshal(data, ptr)
 	if err != nil {
 		return err
 	}
@@ -114,8 +114,4 @@ func CopyFile(src, dst string) (nBytes int64, err error) {
 func RemoveFile(src string) bool {
 	err := os.Remove(src)
 	return err == nil
-}
-
-func GetCacheDir() string {
-	return filepath.Join(GetCurrentDir(), "launcher_cache")
 }

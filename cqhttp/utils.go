@@ -15,6 +15,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func GetCQHttpDir() string {
+	return filepath.Join(utils.GetCurrentDir(), "cqhttp_storage")
+}
+
 func GetCqHttpExec() string {
 	cqhttp := "cqhttp"
 	if plantform.GetPlantform() == plantform.WINDOWS_x86_64 || plantform.GetPlantform() == plantform.WINDOWS_arm64 {
@@ -57,10 +61,6 @@ func WaitConnect(addr string) {
 			return
 		}
 	}
-}
-
-func GetCQHttpDir() string {
-	return filepath.Join(utils.GetCurrentDir(), "cqhttp_storage")
 }
 
 func PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp string) {
@@ -126,7 +126,6 @@ func UnPackCQHttpRunAuth() bool {
 			}
 			utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-群服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json"))
 			utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-频服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json"))
-			// pterm.Success.Println("导入应该成功了")
 			return true
 		}
 	}

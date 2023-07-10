@@ -11,7 +11,7 @@ import (
 
 var (
 	// Fastbuilder远程仓库地址
-	STORAGE_REPO = ""
+	STORAGE_REPO = OFFICIAL_REPO
 
 	// Github 镜像地址
 	GITHUB_MIRROR = "https://www.omega-download.top/"

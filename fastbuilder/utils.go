@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"omega_launcher/plantform"
 	"omega_launcher/utils"
-	"path"
 	"path/filepath"
 
 	"github.com/pterm/pterm"
 )
+
+func GetOmegaStorageDir() string {
+	return filepath.Join(utils.GetCurrentDir(), "omega_storage")
+}
 
 // 获取FB文件名
 func GetFBExecName() string {
@@ -35,7 +38,7 @@ func GetFBExecName() string {
 
 // 获取FB文件路径
 func getFBExecPath() string {
-	path := path.Join(utils.GetCurrentDir(), GetFBExecName())
+	path := filepath.Join(utils.GetCurrentDir(), GetFBExecName())
 	result, err := filepath.Abs(path)
 	if err != nil {
 		panic(err)
@@ -69,8 +72,4 @@ func getRemoteFBHash(url string) string {
 // 检查当前目录是否存在FB执行文件
 func CheckExecFile() bool {
 	return utils.IsFile(getFBExecPath())
-}
-
-func GetOmegaStorageDir() string {
-	return path.Join(utils.GetCurrentDir(), "omega_storage")
 }
