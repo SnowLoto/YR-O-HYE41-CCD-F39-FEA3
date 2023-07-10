@@ -11,29 +11,26 @@ import (
 )
 
 // 获取FB文件名
-func GetFBExecName() (name string) {
+func GetFBExecName() string {
 	switch plantform.GetPlantform() {
 	case plantform.WINDOWS_arm64:
 		// 不存在该构建
 	case plantform.WINDOWS_x86_64:
-		name = "phoenixbuilder-windows-executable-x86_64.exe"
+		return "phoenixbuilder-windows-executable-x86_64.exe"
 	case plantform.Linux_arm64:
-		name = "phoenixbuilder-aarch64"
+		return "phoenixbuilder-aarch64"
 	case plantform.Linux_x86_64:
-		name = "phoenixbuilder"
+		return "phoenixbuilder"
 	case plantform.MACOS_arm64:
-		name = "phoenixbuilder-macos-arm64"
+		return "phoenixbuilder-macos-arm64"
 	case plantform.MACOS_x86_64:
-		name = "phoenixbuilder-macos-x86_64"
+		return "phoenixbuilder-macos-x86_64"
 	case plantform.Android_arm64:
-		name = "phoenixbuilder-android-termux-shared-executable-arm64"
+		return "phoenixbuilder-android-termux-shared-executable-arm64"
 	case plantform.Android_x86_64:
-		name = "phoenixbuilder-android-termux-shared-executable-x86_64"
+		return "phoenixbuilder-android-termux-shared-executable-x86_64"
 	}
-	if name == "" {
-		panic("尚未支持该平台" + plantform.GetPlantform())
-	}
-	return name
+	panic("尚未支持该平台" + plantform.GetPlantform())
 }
 
 // 获取FB文件路径
