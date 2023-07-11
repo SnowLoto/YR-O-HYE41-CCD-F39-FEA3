@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -13,13 +14,16 @@ import (
 )
 
 // CONF, 与 INFO 相似的样式
-var ConfPrinter = pterm.PrefixPrinter{
-	MessageStyle: &pterm.ThemeDefault.InfoMessageStyle,
-	Prefix: pterm.Prefix{
-		Style: &pterm.ThemeDefault.InfoPrefixStyle,
-		Text:  "CONF",
-	},
-}
+var (
+	IsFirstPsw  = true
+	ConfPrinter = pterm.PrefixPrinter{
+		MessageStyle: &pterm.ThemeDefault.InfoMessageStyle,
+		Prefix: pterm.Prefix{
+			Style: &pterm.ThemeDefault.InfoPrefixStyle,
+			Text:  "CONF",
+		},
+	}
+)
 
 func ReadLine() string {
 	buf := bufio.NewReader(os.Stdin)
@@ -48,6 +52,12 @@ func GetValidInput(text string) string {
 }
 
 func GetPswInput(text string) string {
+	if !IsFirstPsw {
+		// 光标上移一行
+		fmt.Print("\033[1A")
+		fmt.Print("\r")
+	}
+	IsFirstPsw = false
 	result, err := pterm.DefaultInteractiveTextInput.WithMask("*").Show(ConfPrinter.Sprintf(text + " (不会回显)"))
 	if err != nil {
 		panic(err)
