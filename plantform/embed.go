@@ -18,3 +18,7 @@ func GetCqHttpBinary() []byte {
 func GetPlantform() string {
 	return PLANTFORM
 }
+
+func GetOringinExecName() string {
+	return OriginExecName
+}

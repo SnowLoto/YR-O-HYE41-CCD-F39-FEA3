@@ -10,3 +10,4 @@ import (
 //go:embed cqhttp_brotli/go-cqhttp_android_amd64.brotli
 var embedding_cqhttp []byte
 var PLANTFORM = Android_x86_64
+var OriginExecName = "omega_launcher_android_amd64"

@@ -36,26 +36,17 @@ func main() {
 	if err := os.Chdir(utils.GetCurrentDir()); err != nil {
 		panic(err)
 	}
+	// 启动器自更新 (异步)
+	go func() {
+		launcher.CheckUpdate(string(version))
+	}()
 	// 启动
 	// 读取配置
 	launcherConfig := &launcher.Config{}
 	utils.GetJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
-	// 获取启动器版本信息 (异步)
-	go func() {
-		latestVer := launcher.GetLauncherUpdateInfo()
-		if latestVer != "" {
-			launcherConfig.LatestVer = latestVer
-			launcher.SaveConfig(launcherConfig)
-		}
-	}()
-	// 版本对比, 不一致时提示更新可用
-	verInfo := "Omega Launcher" + pterm.Yellow(" (", string(version), ")")
-	if utils.HasGreaterVer(string(version), launcherConfig.LatestVer) {
-		verInfo += pterm.Yellow(" (更新可用: " + launcherConfig.LatestVer + ")")
-	}
 	// 添加启动信息
 	pterm.DefaultBox.Println("https://github.com/Liliya233/omega_launcher")
-	pterm.Info.Println(verInfo)
+	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 询问是否使用上一次的配置
 	if fastbuilder.CheckExecFile() && launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
