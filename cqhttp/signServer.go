@@ -44,7 +44,6 @@ func checkHTTPConnection(url string) bool {
 	client := http.Client{
 		Timeout: time.Second,
 	}
-
 	resp, err := client.Get(url)
 	if err != nil {
 		return false
@@ -54,41 +53,58 @@ func checkHTTPConnection(url string) bool {
 	return resp.StatusCode == http.StatusOK
 }
 
-func getSignServerCache() (string, []byte) {
+func isSignServerCache() (string, string, bool) {
 	pterm.Warning.Printfln("正在检查 Sign Server 更新..")
 	var release struct {
 		TagName string `json:"tag_name"`
+		Assets  []struct {
+			Name string `json:"name"`
+			Size int64  `json:"size"`
+		} `json:"assets"`
 	}
 	err := json.Unmarshal(utils.DownloadBytes("https://api.github.com/repos/fuqiuluo/unidbg-fetch-qsign/releases/latest"), &release)
 	if err != nil {
 		pterm.Error.Println("检查 Sign Server 更新时出现问题")
 		panic(err)
 	}
-	fileName := fmt.Sprintf("unidbg-fetch-qsign-%s.zip", release.TagName)
-	fileContent, err := utils.GetFileData(filepath.Join(utils.GetCacheDir(), "downloads", fileName))
-	if err != nil {
-		return fileName, nil
+	downloadFileName := fmt.Sprintf("unidbg-fetch-qsign-%s.zip", release.TagName)
+	downloadFilePath := filepath.Join(utils.GetCacheDir(), "downloads", downloadFileName)
+	// 找到asset的Name与downloadFileName相等的一项, 然后对比它的size
+	for _, asset := range release.Assets {
+		if asset.Name == downloadFileName {
+			currentSize, err := utils.GetFileSize(downloadFilePath)
+			if err != nil {
+				return downloadFileName, downloadFilePath, false
+			}
+			if currentSize == asset.Size {
+				return downloadFileName, downloadFilePath, true
+			}
+			break
+		}
 	}
-	return fileName, fileContent
+	return downloadFileName, downloadFilePath, false
 }
 
 func signServerDeploy() string {
-	fileName, fileContent := getSignServerCache()
-	if len(fileContent) == 0 {
+	downloadFileName, downloadFilePath, isCache := isSignServerCache()
+	if !isCache {
 		pterm.Warning.Printfln("正在下载 Sign Server 可执行文件..")
-		fileContent = utils.DownloadBytes(signServerDownloadUrl + fileName)
-		utils.WriteFileData(filepath.Join(utils.GetCacheDir(), "downloads", fileName), fileContent)
+		utils.DownloadFile(signServerDownloadUrl+downloadFileName, downloadFilePath)
 	}
-	dirName := strings.TrimSuffix(fileName, ".zip")
-	if !utils.IsDir(filepath.Join(utils.GetCacheDir(), "SignServer", dirName)) {
+	execDirName := strings.TrimSuffix(downloadFileName, ".zip")
+	if !utils.IsDir(filepath.Join(utils.GetCacheDir(), "SignServer", execDirName)) {
 		pterm.Warning.Printfln("正在解压 Sign Server 可执行文件..")
-		if err := utils.UnZip(fileContent, filepath.Join(utils.GetCacheDir(), "SignServer")); err != nil {
-			utils.RemoveFile(filepath.Join(utils.GetCacheDir(), "downloads", fileName))
+		fp, err := os.OpenFile(downloadFilePath, os.O_RDONLY, 0755)
+		if err != nil {
+			panic(err)
+		}
+		if err := utils.UnZip(fp, filepath.Join(utils.GetCacheDir(), "SignServer")); err != nil {
+			utils.RemoveFile(downloadFilePath)
 			panic(err)
 		}
 		pterm.Success.Printfln("Sign Server 已成功部署")
 	}
-	return dirName
+	return execDirName
 }
 
 func setupConfig(configPath string, host string, port int, uin int64, androidID string) {
@@ -107,7 +123,6 @@ func setupConfig(configPath string, host string, port int, uin int64, androidID 
 	config.Key = "233233"
 	config.Server.Host = host
 	config.Server.Port = port
-
 	modifiedConfigBytes, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		panic("序列化配置文件时出现错误: " + err.Error())

@@ -37,20 +37,9 @@ func getJavaCompressFileName() string {
 	panic("请尝试自行安装 Java")
 }
 
-func getJavaCache(fileName string) []byte {
-	localFilePath := filepath.Join(utils.GetCacheDir(), "downloads", fileName)
-	if !utils.IsFile(localFilePath) {
-		return nil
-	}
+func isJavaCache(fileName, downloadDst string) bool {
 	pterm.Warning.Printfln("正在检查 Java 运行环境文件..")
-	if string(utils.DownloadBytes(javaDownloadUrl+fileName+".sha256")) != utils.GetFileHash(localFilePath) {
-		return nil
-	}
-	result, err := utils.GetFileData(localFilePath)
-	if err != nil {
-		panic(err)
-	}
-	return result
+	return string(utils.DownloadBytes(javaDownloadUrl+fileName+".sha256")) == utils.GetFileHash(downloadDst)
 }
 
 func CheckJava() bool {
@@ -59,27 +48,31 @@ func CheckJava() bool {
 }
 
 func JavaDeploy() {
-	if utils.IsDir(filepath.Join(utils.GetCacheDir(), "Java", "jdk-20.0.1")) {
+	javaExecFile := filepath.Join(utils.GetCacheDir(), "Java", "jdk-20.0.1", "bin", "java")
+	if utils.IsFile(javaExecFile) {
 		return
 	}
 	fileName := getJavaCompressFileName()
-	fileContent := getJavaCache(fileName)
-	if fileContent == nil {
+	downloadDst := filepath.Join(utils.GetCacheDir(), "downloads", fileName)
+	if !isJavaCache(fileName, downloadDst) {
 		pterm.Warning.Printfln("正在下载 Java 运行环境文件..")
-		fileContent = utils.DownloadBytes(javaDownloadUrl + fileName)
-		utils.WriteFileData(filepath.Join(utils.GetCacheDir(), "downloads", fileName), fileContent)
+		utils.DownloadFile(javaDownloadUrl+fileName, downloadDst)
 	}
 	pterm.Warning.Printfln("正在解压 Java 运行环境文件..")
-	dstDir := filepath.Join(utils.GetCacheDir(), "Java")
+	fp, err := os.OpenFile(downloadDst, os.O_RDONLY, 0)
+	if err != nil {
+		panic(err)
+	}
+	uncompressDir := filepath.Join(utils.GetCacheDir(), "Java")
 	if strings.HasSuffix(fileName, ".tar.gz") {
-		if err := utils.UnTarGz(fileContent, dstDir); err != nil {
-			utils.RemoveFile(filepath.Join(utils.GetCacheDir(), "downloads", fileName))
+		if err := utils.UnTarGz(fp, uncompressDir); err != nil {
+			utils.RemoveFile(downloadDst)
 			panic(err)
 		}
-		os.Chmod(filepath.Join(utils.GetCacheDir(), "Java", "jdk-20.0.1", "bin", "java"), 0755)
+		os.Chmod(javaExecFile, 0755)
 	} else {
-		if err := utils.UnZip(fileContent, dstDir); err != nil {
-			utils.RemoveFile(filepath.Join(utils.GetCacheDir(), "downloads", fileName))
+		if err := utils.UnZip(fp, uncompressDir); err != nil {
+			utils.RemoveFile(downloadDst)
 			panic(err)
 		}
 	}

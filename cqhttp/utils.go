@@ -33,31 +33,22 @@ func GetCqHttpExec() string {
 }
 
 func GetCqHttpBinary() []byte {
-	compressedData := plantform.GetCqHttpBinary()
 	var execBytes []byte
 	var err error
-	if execBytes, err = io.ReadAll(brotli.NewReader(bytes.NewReader(compressedData))); err != nil {
+	if execBytes, err = io.ReadAll(brotli.NewReader(bytes.NewReader(plantform.GetCqHttpBinary()))); err != nil {
 		panic(err)
 	}
 	return execBytes
 }
 
 func GetCQHttpHash() string {
-	exec := GetCqHttpExec()
-	return utils.GetFileHash(exec)
-}
-
-func GetEmbeddedCQHttpHash() string {
-	return utils.GetBinaryHash(GetCqHttpBinary())
+	return utils.GetFileHash(GetCqHttpExec())
 }
 
 func WaitConnect(addr string) {
+	u := url.URL{Scheme: "ws", Host: addr}
 	for {
-		u := url.URL{Scheme: "ws", Host: addr}
-		if _, _, err := websocket.DefaultDialer.Dial(u.String(), nil); err != nil {
-			// time.Sleep(1)
-			continue
-		} else {
+		if _, _, err := websocket.DefaultDialer.Dial(u.String(), nil); err == nil {
 			return
 		}
 	}
@@ -78,56 +69,42 @@ func PackCQHttpRunAuth(qGroupLinkFp, qGuildLinkFp string) {
 	}
 	fileName := filepath.Join(fastbuilder.GetOmegaStorageDir(), "上传这个文件到云服务器以使用云服务器的群服互通.data")
 	fp, err := os.OpenFile(fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
-	fp.Write([]byte(uuid))
 	if err != nil {
 		panic(err)
 	}
+	defer fp.Close()
+	fp.Write([]byte(uuid))
 	if err := utils.Zip(GetCQHttpDir(), fp, []string{"data", "logs"}); err != nil {
 		panic(err)
 	}
-	fp.Close()
 	os.Remove(filepath.Join(GetCQHttpDir(), "组件-群服互通.json"))
 	os.Remove(filepath.Join(GetCQHttpDir(), "组件-频服互通.json"))
 }
 
 func UnPackCQHttpRunAuth() bool {
 	fileName := filepath.Join(fastbuilder.GetOmegaStorageDir(), "上传这个文件到云服务器以使用云服务器的群服互通.data")
-	if utils.IsFile(fileName) {
-		var fp *os.File
-		defer func() {
-			if fp != nil {
-				fp.Close()
-			}
-		}()
-		fp, err := os.OpenFile(fileName, os.O_RDONLY, 0755)
-		if err != nil {
+	fp, err := os.OpenFile(fileName, os.O_RDONLY, 0)
+	if err != nil {
+		return false
+	}
+	uuidBytes := make([]byte, 36)
+	if _, err := fp.Read(uuidBytes); err != nil {
+		panic(err)
+	}
+	uuidFile := filepath.Join(GetCQHttpDir(), "uuid")
+	if thisUUidBytes, err := utils.GetFileData(uuidFile); err == nil {
+		if bytes.Equal(thisUUidBytes, uuidBytes) {
+			return false
+		}
+	}
+	if utils.GetInputYN("已读取到 data 文件，要导入吗?") {
+		os.RemoveAll(GetCQHttpDir())
+		if err := utils.UnZip(fp, GetCQHttpDir()); err != nil {
 			panic(err)
 		}
-		uuidBytes := make([]byte, 36)
-		if _, err := fp.Read(uuidBytes); err != nil {
-			panic(err)
-		}
-		uuidFile := filepath.Join(GetCQHttpDir(), "uuid")
-		if utils.IsFile(uuidFile) {
-			if thisUUidBytes, err := utils.GetFileData(uuidFile); err == nil {
-				if string(thisUUidBytes) == string(uuidBytes) {
-					return false
-				}
-			}
-		}
-		if utils.GetInputYN("已读取到 data 文件，要导入吗?") {
-			os.RemoveAll(GetCQHttpDir())
-			zipData, err := io.ReadAll(fp)
-			if err != nil {
-				panic(err)
-			}
-			if err := utils.UnZip(zipData, GetCQHttpDir()); err != nil {
-				panic(err)
-			}
-			utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-群服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json"))
-			utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-频服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json"))
-			return true
-		}
+		utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-群服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "群服互通", "组件-群服互通.json"))
+		utils.CopyFile(filepath.Join(GetCQHttpDir(), "组件-频服互通.json"), filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置", "第三方_by_Liliya233", "频服互通", "组件-第三方__Liliya233__频服互通.json"))
+		return true
 	}
 	return false
 }

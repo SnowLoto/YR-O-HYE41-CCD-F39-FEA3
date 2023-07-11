@@ -2,10 +2,12 @@ package utils
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -40,6 +42,14 @@ func DownloadBytes(sourceUrl string) []byte {
 }
 
 func DownloadFile(sourceURL string, destinationPath string) {
+	// 获取目录路径
+	destinationDir := filepath.Dir(destinationPath)
+	// 创建目录
+	if !MkDir(destinationDir) {
+		err := errors.New("创建目录时出现错误")
+		pterm.Fatal.WithFatal(false).Println(err.Error())
+		panic(err)
+	}
 	// 发起HTTP GET请求
 	resp, err := http.Get(sourceURL)
 	if err != nil {

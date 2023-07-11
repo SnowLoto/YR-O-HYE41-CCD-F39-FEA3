@@ -28,8 +28,17 @@ func MkDir(path string) bool {
 	return true
 }
 
-func GetFileData(fname string) ([]byte, error) {
-	fp, err := os.OpenFile(fname, os.O_CREATE|os.O_RDONLY, 0755)
+func GetFileSize(filePath string) (int64, error) {
+	fileInfo, err := os.Stat(filePath)
+	if err != nil {
+		return 0, err
+	}
+	fileSize := fileInfo.Size()
+	return fileSize, nil
+}
+
+func GetFileData(filePath string) ([]byte, error) {
+	fp, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDONLY, 0755)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +50,8 @@ func GetFileData(fname string) ([]byte, error) {
 	return buf, err
 }
 
-func GetJsonData(fname string, ptr interface{}) error {
-	data, err := GetFileData(fname)
+func GetJsonData(filePath string, ptr interface{}) error {
+	data, err := GetFileData(filePath)
 	if err != nil {
 		return err
 	}
@@ -56,9 +65,9 @@ func GetJsonData(fname string, ptr interface{}) error {
 	return nil
 }
 
-func WriteFileData(fname string, data []byte) error {
-	MkDir(filepath.Dir(fname))
-	fp, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0755)
+func WriteFileData(filePath string, data []byte) error {
+	MkDir(filepath.Dir(filePath))
+	fp, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}
@@ -69,8 +78,8 @@ func WriteFileData(fname string, data []byte) error {
 	return nil
 }
 
-func WriteJsonData(fname string, data interface{}) error {
-	file, err := os.OpenFile(fname, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+func WriteJsonData(filePath string, data interface{}) error {
+	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}

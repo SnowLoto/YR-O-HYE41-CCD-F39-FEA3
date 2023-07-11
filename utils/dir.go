@@ -12,7 +12,7 @@ func GetCacheDir() string {
 
 func GetCurrentDir() string {
 	// 兼容配套的Docker
-	if IsFile(filepath.Join("ome", "launcher_liliya")) {
+	if plantform.GetPlantform() == plantform.Linux_x86_64 && IsFile(filepath.Join("ome", "launcher_liliya")) {
 		return filepath.Join("workspace")
 	}
 	pathExecutable, err := os.Executable()
