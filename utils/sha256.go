@@ -19,5 +19,5 @@ func GetFileHash(fname string) string {
 		return ""
 	}
 	hashValue := hash.Sum(nil)
-	return hex.EncodeToString(hashValue)[:64]
+	return hex.EncodeToString(hashValue)
 }
