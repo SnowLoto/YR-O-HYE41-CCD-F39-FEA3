@@ -63,10 +63,8 @@ func Run(launcherCfg *launcher.Config) {
 	updateCQConfigAddress(availableAddress, startingSignServerAddress)
 	// 启动前保存一次启动器配置
 	launcher.SaveConfig(launcherCfg)
-	// 配置启动参数
-	args := []string{"-faststart", "-update-protocol"}
 	// 配置执行目录
-	cmd := exec.Command(GetCqHttpExec(), args...)
+	cmd := exec.Command(GetCqHttpExec(), []string{"-faststart", "-update-protocol"}...)
 	cmd.Dir = filepath.Join(GetCQHttpDir())
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
@@ -90,14 +88,16 @@ func Run(launcherCfg *launcher.Config) {
 		}
 	}()
 	// 启动并持续运行cqhttp
+	pterm.Success.Println("正在启动 go-cqhttp, 请根据其提示进行操作")
 	go func() {
-		pterm.Success.Println("正在启动 go-cqhttp, 请根据其提示进行操作")
-		err := cmd.Start()
-		if err != nil {
+		if err := cmd.Start(); err != nil {
 			pterm.Fatal.WithFatal(false).Println("go-cqhttp 启动时出现错误")
 			panic(err)
 		}
-		cmd.Wait()
+		if err := cmd.Wait(); err != nil {
+			pterm.Fatal.WithFatal(false).Println("go-cqhttp 在运行过程中出现错误")
+			panic(err)
+		}
 	}()
 	// 等待cqhttp启动完成
 	WaitConnect(availableAddress)

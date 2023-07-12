@@ -166,35 +166,30 @@ func SignServerStart(soVersion string) string {
 		pterm.Error.Println("Sign Server 启动失败, 未能够从 go-cqhttp 配置文件中获取QQ账号")
 		return ""
 	}
-	args := []string{
-		fmt.Sprintf("--basePath=%s", filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "txlib", soVersion)),
-	}
 	// 如果不是Windows则去掉.bat
 	cmdStr := filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "bin", "unidbg-fetch-qsign.bat")
 	if currentPlanform := plantform.GetPlantform(); currentPlanform != plantform.WINDOWS_x86_64 && currentPlanform != plantform.WINDOWS_arm64 {
 		cmdStr = strings.TrimSuffix(cmdStr, ".bat")
 		os.Chmod(cmdStr, 0755)
 	}
-	// 运行Sign Server
-	cmd := exec.Command(cmdStr, args...)
+	// 启动命令
+	cmd := exec.Command(cmdStr, []string{fmt.Sprintf("--basePath=%s", filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "txlib", soVersion))}...)
+	// 配置Java运行环境
 	if !deploy.CheckJava() {
 		pterm.Warning.Println("系统未安装Java, 将尝试安装对应的 Java 环境")
 		deploy.JavaDeploy()
 		cmd.Env = append(os.Environ(), fmt.Sprintf("JAVA_HOME=%s", filepath.Join(utils.GetCacheDir(), "Java", "jdk-20.0.1")))
 	}
+	// 运行SignServer
+	pterm.Success.Println("正在启动 Sign Server..")
 	go func() {
-		pterm.Success.Println("正在启动 Sign Server..")
-		for {
-			if err := cmd.Start(); err != nil {
-				pterm.Fatal.WithFatal(false).Println("启动 Sign Server 时出现错误")
-				panic(err)
-			}
-			err := cmd.Wait()
-			if err != nil {
-				pterm.Error.Println(err)
-			}
-			cmd.Process.Kill()
-			pterm.Warning.Println("重新启动 Sign Server..")
+		if err := cmd.Start(); err != nil {
+			pterm.Fatal.WithFatal(false).Println("启动 Sign Server 时出现错误")
+			panic(err)
+		}
+		if err := cmd.Wait(); err != nil {
+			pterm.Fatal.WithFatal(false).Println("Sign Server 在运行过程中出现错误")
+			panic(err)
 		}
 	}()
 	// 等待连接
