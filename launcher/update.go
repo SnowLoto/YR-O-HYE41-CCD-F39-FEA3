@@ -59,6 +59,8 @@ func CheckUpdate(currentVer string) {
 	// 每小时检查一次更新
 	for {
 		update()
+		// 清除临时文件 (如有)
+		utils.RemoveFile(filepath.Join(utils.GetCurrentDir(), fmt.Sprintf(".%s.new", execName)))
 		time.Sleep(time.Hour)
 	}
 }
