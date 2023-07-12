@@ -23,11 +23,10 @@ func loadCurrentFBToken() string {
 	if err != nil {
 		return ""
 	}
-	fbconfigdir := filepath.Join(homedir, ".config", "fastbuilder")
-	token := filepath.Join(fbconfigdir, "fbtoken")
+	tokenPath := filepath.Join(homedir, ".config", "fastbuilder", "fbtoken")
 	// 尝试读取token文件
-	if utils.IsFile(token) {
-		if data, err := utils.GetFileData(token); err == nil {
+	if utils.IsFile(tokenPath) {
+		if data, err := utils.GetFileData(tokenPath); err == nil {
 			return string(data)
 		}
 	}
@@ -41,10 +40,9 @@ func deleteCurrentFBToken() bool {
 	if err != nil {
 		return false
 	}
-	fbconfigdir := filepath.Join(homedir, ".config", "fastbuilder")
-	token := filepath.Join(fbconfigdir, "fbtoken")
+	tokenPath := filepath.Join(homedir, ".config", "fastbuilder", "fbtoken")
 	// 尝试删除token文件
-	return utils.RemoveFile(token)
+	return utils.RemoveFile(tokenPath)
 }
 
 // 请求token
