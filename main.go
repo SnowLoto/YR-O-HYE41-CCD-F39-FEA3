@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/pterm/pterm"
+	"golang.org/x/term"
 )
 
 //go:embed VERSION
@@ -24,9 +25,12 @@ func beforeClose() {
 	if err != nil {
 		pterm.Fatal.WithFatal(false).Println(err)
 	}
-	// Make Windows users happy
 	if p := plantform.GetPlantform(); p == plantform.WINDOWS_x86_64 || p == plantform.WINDOWS_arm64 {
+		// Make Windows users happy
 		time.Sleep(time.Second * 5)
+	} else {
+		// Make Unix users happy
+		term.MakeRaw(0)
 	}
 }
 
