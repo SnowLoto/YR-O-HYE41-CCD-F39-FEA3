@@ -10,6 +10,7 @@ import (
 	"omega_launcher/utils"
 	"os"
 	"path/filepath"
+	"time"
 
 	selfupdate "github.com/creativeprojects/go-selfupdate"
 )
@@ -23,35 +24,41 @@ func CheckUpdate(currentVer string) {
 	execName := plantform.GetOringinExecName()
 	// 移除旧文件
 	utils.RemoveFile(filepath.Join(utils.GetCurrentDir(), fmt.Sprintf(".%s.old", execName)))
-	// 请求数据
-	resp, err := http.Get("https://api.github.com/repos/Liliya233/omega_launcher/releases/latest")
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-	// 读取响应体
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	// 解析JSON
-	var release struct {
-		TagName string `json:"tag_name"`
-	}
-	err = json.Unmarshal(body, &release)
-	if err != nil {
-		return
-	}
-	// 自更新
-	if utils.HasGreaterVer(currentVer, release.TagName) {
-		exe, err := os.Executable()
+	update := func() {
+		// 请求数据
+		resp, err := http.Get("https://api.github.com/repos/Liliya233/omega_launcher/releases/latest")
 		if err != nil {
 			return
 		}
-		if err := selfupdate.UpdateTo(context.Background(), "https://github.com/Liliya233/omega_launcher/releases/latest/download/"+execName, execName, exe); err != nil {
-			if err := selfupdate.UpdateTo(context.Background(), "https://www.omega-download.top/https://github.com/Liliya233/omega_launcher/releases/latest/download/"+execName, execName, exe); err != nil {
+		defer resp.Body.Close()
+		// 读取响应体
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
+		// 解析JSON
+		var release struct {
+			TagName string `json:"tag_name"`
+		}
+		if err := json.Unmarshal(body, &release); err != nil {
+			return
+		}
+		// 自更新
+		if utils.HasGreaterVer(currentVer, release.TagName) {
+			exe, err := os.Executable()
+			if err != nil {
 				return
 			}
+			if err := selfupdate.UpdateTo(context.Background(), "https://www.omega-download.top/https://github.com/Liliya233/omega_launcher/releases/latest/download/"+execName, execName, exe); err != nil {
+				if err := selfupdate.UpdateTo(context.Background(), "https://github.com/Liliya233/omega_launcher/releases/latest/download/"+execName, execName, exe); err != nil {
+					return
+				}
+			}
 		}
+	}
+	// 每小时检查一次更新
+	for {
+		update()
+		time.Sleep(time.Second * 5)
 	}
 }

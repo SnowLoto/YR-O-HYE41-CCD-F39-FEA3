@@ -1,10 +1,15 @@
+# 文件夹
 /.vscode
 /build
-/*.exe
-
-/服务器登录配置.json
 /cqhttp_storage
 /omega_storage
 /launcher_cache
 
+# 后缀名
+/*.exe
+/*.old
+/*.new
+
+# 文件名
+/服务器登录配置.json
 /compressor/go-cqhttp_*

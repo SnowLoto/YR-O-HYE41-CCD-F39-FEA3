@@ -41,9 +41,7 @@ func main() {
 		panic(err)
 	}
 	// 启动器自更新 (异步)
-	go func() {
-		launcher.CheckUpdate(string(version))
-	}()
+	go launcher.CheckUpdate(string(version))
 	// 启动
 	// 读取配置
 	launcherConfig := &launcher.Config{}
