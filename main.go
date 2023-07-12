@@ -10,6 +10,7 @@ import (
 	"omega_launcher/utils"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 
 	"github.com/pterm/pterm"
@@ -24,6 +25,8 @@ func beforeClose() {
 	err := recover()
 	if err != nil {
 		pterm.Fatal.WithFatal(false).Println(err)
+		// Make Contributors happy
+		debug.PrintStack()
 	}
 	if p := plantform.GetPlantform(); p == plantform.WINDOWS_x86_64 || p == plantform.WINDOWS_arm64 {
 		// Make Windows users happy

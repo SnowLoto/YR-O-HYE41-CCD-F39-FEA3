@@ -171,7 +171,7 @@ func Run(cfg *launcher.Config) {
 		// 启动并持续运行Fastbuilder
 		err = cmd.Start()
 		if !isStopped && err != nil {
-			pterm.Error.Println("Omega/Fastbuilder 启动时出现错误")
+			pterm.Fatal.WithFatal(false).Println("Omega/Fastbuilder 启动时出现错误")
 			panic(err)
 		}
 		err = cmd.Wait()
