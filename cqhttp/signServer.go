@@ -137,7 +137,7 @@ func SignServerStart(soVersion string) string {
 	deviceJsonPath := filepath.Join(GetCQHttpDir(), "device.json")
 	if !utils.IsFile(deviceJsonPath) {
 		pterm.Warning.Println("尚未生成 device.json, 将跳过 Sign Server 的配置")
-		return ""
+		return "-"
 	}
 	deviceJsonContent, _ := utils.GetFileData(deviceJsonPath)
 	var device struct {
@@ -147,24 +147,24 @@ func SignServerStart(soVersion string) string {
 	err := json.Unmarshal(deviceJsonContent, &device)
 	if err != nil {
 		pterm.Error.Println("读取 device.json 时出现错误, 将跳过 Sign Server 的配置: " + err.Error())
-		return ""
+		return "-"
 	}
 	if device.Protocol != 6 {
 		pterm.Error.Println("未使用 Android Pad 登录协议 (6), 将跳过 Sign Server 的配置")
-		return ""
+		return "-"
 	}
 	signServerDirName := signServerDeploy()
 	availablePort, err := utils.GetAvailablePort()
 	if err != nil {
 		pterm.Error.Println("无法获取可用的端口来启动 Sign Server: " + err.Error())
-		return ""
+		return "-"
 	}
 	if cqCfg := getCQConfig(); cqCfg != nil {
 		configPath := filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "txlib", soVersion, "config.json")
 		setupConfig(configPath, "0.0.0.0", availablePort, cqCfg.Account.Uin, device.AndroidId)
 	} else {
 		pterm.Error.Println("Sign Server 启动失败, 未能够从 go-cqhttp 配置文件中获取QQ账号")
-		return ""
+		return "-"
 	}
 	// 如果不是Windows则去掉.bat
 	cmdStr := filepath.Join(utils.GetCacheDir(), "SignServer", signServerDirName, "bin", "unidbg-fetch-qsign.bat")

@@ -19,9 +19,8 @@ var defaultConfigBytes []byte
 // Copy from go-cqhttp
 // Account 账号配置
 type Account struct {
-	Uin        int64  `yaml:"uin"`
-	Password   string `yaml:"password"`
-	SignServer string `yaml:"sign-server"`
+	Uin      int64  `yaml:"uin"`
+	Password string `yaml:"password"`
 }
 
 // Config 总配置文件
@@ -53,18 +52,15 @@ func writeCQConfig(cfgStr string) {
 
 // 更新cqhttp配置文件的地址
 func updateCQConfigAddress(wsAddress, signServerAddress string) {
-	cqCfg := getCQConfig()
 	cfgStr := strings.Replace(string(defaultConfigBytes), "[WS地址]", wsAddress, 1)
-	if signServerAddress != "" {
-		cqCfg.Account.SignServer = signServerAddress
-	}
-	// 保留账密信息
-	if cqCfg != nil {
+	if cqCfg := getCQConfig(); cqCfg != nil {
+		// 保留账密信息
 		cfgStr = strings.Replace(cfgStr, "[QQ账号]", fmt.Sprint(cqCfg.Account.Uin), 1)
 		cfgStr = strings.Replace(cfgStr, "[QQ密码]", cqCfg.Account.Password, 1)
-		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", cqCfg.Account.SignServer, 1)
+		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", signServerAddress, 1)
 	} else {
-		cfgStr = strings.Replace(cfgStr, "[QQ账号]", "null", 1)
+		// 默认配置
+		cfgStr = strings.Replace(cfgStr, "[QQ账号]", "1233456", 1)
 		cfgStr = strings.Replace(cfgStr, "[QQ密码]", "", 1)
 		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", "-", 1)
 	}
