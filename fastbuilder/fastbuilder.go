@@ -45,8 +45,6 @@ func Run(cfg *launcher.Config) {
 			time.Sleep(time.Second)
 		}
 	}()
-	// 获取命令args
-	args := setupCmdArgs(cfg)
 	// 建立频道
 	readC := make(chan string)
 	stop := make(chan string)
@@ -76,7 +74,7 @@ func Run(cfg *launcher.Config) {
 		// 启动时提示信息
 		pterm.Success.Println("正在启动 Omega/Fastbuilder")
 		// 启动命令
-		cmd := exec.Command(getFBExecPath(), args...)
+		cmd := exec.Command(getFBExecPath(), setupCmdArgs(cfg)...)
 		cmd.Dir = filepath.Join(utils.GetCurrentDataDir())
 		// 由于需要对内容进行处理, 所以不能直接进行io复制
 		// 建立从Fastbuilder到控制台的错误管道
