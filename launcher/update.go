@@ -59,6 +59,6 @@ func CheckUpdate(currentVer string) {
 	// 每小时检查一次更新
 	for {
 		update()
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Hour)
 	}
 }
