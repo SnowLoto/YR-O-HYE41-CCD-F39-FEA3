@@ -27,6 +27,7 @@ type Config struct {
 		Port int    `json:"port"`
 	} `json:"server"`
 	Key            string `json:"key"`
+	AutoRegister   bool   `json:"auto_register"`
 	ReloadInterval int    `json:"reload_interval"`
 	Protocol       struct {
 		Qua     string `json:"qua"`
@@ -49,7 +50,6 @@ func checkHTTPConnection(url string) bool {
 		return false
 	}
 	defer resp.Body.Close()
-
 	return resp.StatusCode == http.StatusOK
 }
 
