@@ -16,7 +16,7 @@ endif
 
 SRCS_GO := $(foreach dir, $(shell find . -type d), $(wildcard $(dir)/*.go $(dir)/*.c))
 
-all: ${TARGETS}
+all: ${TARGETS} build/hashes.json
 linux-amd64: build/omega_launcher_linux_amd64
 linux-arm64: build/omega_launcher_linux_arm64
 macos-amd64: build/omega_launcher_darwin_amd64
@@ -44,6 +44,8 @@ build/omega_launcher_windows_amd64.exe: build/ /usr/bin/x86_64-w64-mingw32-gcc $
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 CC=/usr/bin/x86_64-w64-mingw32-gcc go build -trimpath -ldflags "-s -w" -o $@
 build/omega_launcher_windows_arm64.exe: build/ /usr/bin/x86_64-w64-mingw32-gcc ${SRCS_GO}
 	CGO_ENABLED=0 GOOS=windows GOARCH=arm64 CC=/usr/bin/x86_64-w64-mingw32-gcc go build -trimpath -ldflags "-s -w" -o $@
+build/hashes.json: build genhash.js ${TARGETS}
+	node genhash.js
 
 clean:
-	rm -f build/omega_launcher_*
+	rm -f build/*
