@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
+	"strings"
 	"time"
 
 	"github.com/pterm/pterm"
@@ -49,7 +50,7 @@ func getLatestLibreReleaseVersion() string {
 	var latestPreRelease release
 	for _, release := range releases {
 		// 不是 libre 分支则直接跳过
-		if release.TargetCommitish != "libre" {
+		if !strings.Contains(release.TargetCommitish, "libre") {
 			continue
 		}
 		// 解析 latest 的时间, 出错时代表 latestPreRelease 为空, 可直接替换
