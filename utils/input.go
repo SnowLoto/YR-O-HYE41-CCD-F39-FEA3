@@ -32,11 +32,9 @@ func ReadLine() string {
 }
 
 func GetInput(text string) string {
-	for {
-		ConfPrinter.Print(text, ": ")
-		result := ReadLine()
-		return result
-	}
+	ConfPrinter.Print(text, ": ")
+	result := ReadLine()
+	return result
 }
 
 func GetValidInput(text string) string {
@@ -76,13 +74,15 @@ func GetInputYN(text string) bool {
 	return result
 }
 
-func GetInputYNInTime(text string, sec int32) bool {
-	isInput := false
+func GetInputYNInTime(text string, sec int32) (bool, bool) {
+	isFinish := false
+	isUser := true
 	// 自动确认
 	go func() {
 		time.Sleep(time.Second * time.Duration(sec))
-		if !isInput {
+		if !isFinish {
 			keyboard.SimulateKeyPress(keys.Enter)
+			isUser = false
 		}
 	}()
 	confirm := pterm.DefaultInteractiveConfirm
@@ -93,8 +93,8 @@ func GetInputYNInTime(text string, sec int32) bool {
 	// 显示并返回用户输入
 	result, _ := confirm.Show(ConfPrinter.Sprint(text) + pterm.Yellow(pterm.Sprintf(" [%d秒后自动确认]", sec)))
 	// 取消自动确认
-	isInput = true
-	return result
+	isFinish = true
+	return result, isUser
 }
 
 func GetIntInputInScope(text string, a, b int) int {

@@ -3,7 +3,6 @@ package launcher
 import (
 	"omega_launcher/utils"
 	"path/filepath"
-	"strings"
 )
 
 // 启动器配置文件结构
@@ -22,9 +21,5 @@ type Config struct {
 
 // 保存配置文件
 func SaveConfig(config *Config) {
-	copyConfig := *config
-	if strings.HasPrefix(copyConfig.FBToken, "{\"encrypt_token\"") {
-		copyConfig.FBToken = ""
-	}
-	utils.WriteJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), copyConfig)
+	utils.WriteJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), config)
 }

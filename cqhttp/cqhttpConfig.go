@@ -76,7 +76,7 @@ func initCQConfig() {
 	// 要求输入cqhttp配置信息
 	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", fmt.Sprint(utils.GetInt64Input("请输入QQ账号")), 1)
 	cfgStr = strings.Replace(cfgStr, "[QQ密码]", utils.GetPswInput("请输入QQ密码"), 1)
-	SignServer := utils.GetInput("请输入SignServer地址, 没有可留空")
+	SignServer := utils.GetInput("请输入 Sign Server 地址 (没有或使用启动器配置请留空)")
 	if SignServer == "" {
 		SignServer = "-"
 	}

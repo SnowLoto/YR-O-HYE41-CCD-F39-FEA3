@@ -1,17 +1,11 @@
 package fastbuilder
 
 import (
-	"bufio"
-	"fmt"
-	"io"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
 	"os/exec"
-	"os/signal"
 	"path/filepath"
-	"strings"
-	"syscall"
 	"time"
 
 	"github.com/pterm/pterm"
@@ -19,7 +13,7 @@ import (
 
 // 配置启动参数
 func setupCmdArgs(cfg *launcher.Config) []string {
-	args := []string{"--plain-token", cfg.FBToken, "--no-update-check", "-c", cfg.RentalCode}
+	args := []string{"--no-update-check", "-c", cfg.RentalCode}
 	// 是否需要租赁服密码
 	if cfg.RentalPasswd != "" {
 		args = append(args, "-p")
@@ -28,6 +22,11 @@ func setupCmdArgs(cfg *launcher.Config) []string {
 	// 是否启动Omega
 	if cfg.StartOmega {
 		args = append(args, "-O")
+	}
+	// 尝试使用 Token
+	if IsToken(cfg.FBToken) {
+		args = append(args, "--plain-token")
+		args = append(args, cfg.FBToken)
 	}
 	return args
 }
@@ -38,172 +37,52 @@ func Run(cfg *launcher.Config) {
 	// 读取验证服务器返回的Token并保存
 	go func() {
 		for {
-			if currentToken := loadCurrentFBToken(); currentToken != "" {
+			if currentToken := loadCurrentFBToken(); IsToken(currentToken) {
 				cfg.FBToken = currentToken
 				launcher.SaveConfig(cfg)
 			}
 			time.Sleep(time.Second)
 		}
 	}()
-	// 建立频道
-	readC := make(chan string)
-	stop := make(chan string)
-	// 持续将输入信息输入到频道中
-	go func() {
-		for {
-			s := utils.ReadLine()
-			readC <- s
-		}
-	}()
 	// 重启间隔
 	restartTime := 0
-	// 上次输入
-	lastInput := ""
-	// 监听程序退出信号
-	exitSignal := make(chan os.Signal, 1)
-	signal.Notify(exitSignal, os.Interrupt)
-	signal.Notify(exitSignal, syscall.SIGTERM)
-	signal.Notify(exitSignal, syscall.SIGQUIT)
 	for {
 		// 记录启动时间
 		startTime := time.Now()
-		// 是否已正常启动
-		isStarted := false
-		// 是否停止
-		isStopped := false
 		// 启动时提示信息
-		pterm.Success.Println("正在启动 Omega/Fastbuilder")
+		pterm.Success.Println("正在启动 Omega/Fastbuilder, 请根据其提示进行操作")
 		// 启动命令
 		cmd := exec.Command(getFBExecPath(), setupCmdArgs(cfg)...)
 		cmd.Dir = filepath.Join(utils.GetCurrentDataDir())
-		// 由于需要对内容进行处理, 所以不能直接进行io复制
-		// 建立从Fastbuilder到控制台的错误管道
-		omega_err, err := cmd.StderrPipe()
-		if err != nil {
-			panic(err)
-		}
-		// 建立从Fastbuilder到控制台的输出管道
-		omega_out, err := cmd.StdoutPipe()
-		if err != nil {
-			panic(err)
-		}
-		// 建立从控制台到Fastbuilder的输入管道
-		omega_in, err := cmd.StdinPipe()
-		if err != nil {
-			panic(err)
-		}
-		// 从管道中获取并打印Fastbuilder错误内容
-		go func() {
-			reader := bufio.NewReader(omega_err)
-			for {
-				readString, err := reader.ReadString('\n')
-				if readString == "\n" {
-					continue
-				}
-				if err != nil || err == io.EOF {
-					//pterm.Error.Println("读取 Omega/Fastbuilder 错误内容时出现错误")
-					return
-				}
-				// 如果程序正在退出则不再发送错误信息
-				if isStopped {
-					return
-				}
-				fmt.Print(readString + "\033[0m")
-			}
-		}()
-		// 从管道中获取并打印Fastbuilder输出内容
-		go func() {
-			reader := bufio.NewReader(omega_out)
-			for {
-				readString, err := reader.ReadString('\n')
-				readString = strings.TrimPrefix(readString, "> ")
-				if readString == "\n" || readString == lastInput+"\n" {
-					lastInput = ""
-					continue
-				}
-				if err != nil || err == io.EOF {
-					//pterm.Error.Println("读取 Omega/Fastbuilder 输出内容时出现错误")
-					return
-				}
-				fmt.Print(readString + "\033[0m")
-			}
-		}()
-		// 在未收到停止信号前, 启动器会一直将控制台输入的内容通过管道发送给Fastbuilder
-		go func() {
-			for {
-				select {
-				case <-stop:
-					return
-				case <-exitSignal:
-					// 关闭重启
-					isStopped = true
-					// 正常运行时使用关闭命令退出程序
-					if isStarted {
-						if cfg.StartOmega {
-							omega_in.Write([]byte("stop\n"))
-						} else {
-							omega_in.Write([]byte("exit\n"))
-						}
-						return
-					}
-					// 强制退出
-					os.Exit(1)
-				case s := <-readC:
-					lastInput = s
-					// 接收到停止命令时处理
-					if (cfg.StartOmega && s == "stop") || s == "exit" || s == "fbexit" {
-						// 关闭重启
-						isStopped = true
-						// 发出停止命令
-						omega_in.Write([]byte(s + "\n"))
-						// 输出信息
-						pterm.Success.Println("正在等待 Omega/Fastbuilder 处理退出命令")
-						// 停止接收输入
-						return
-					} else {
-						omega_in.Write([]byte(s + "\n"))
-					}
-				}
-			}
-		}()
+		cmd.Stdout = os.Stdout
+		cmd.Stdin = os.Stdin
+		cmd.Stderr = os.Stderr
 		// 启动并持续运行Fastbuilder
-		err = cmd.Start()
-		if !isStopped && err != nil {
+		if err := cmd.Start(); err != nil {
 			pterm.Fatal.WithFatal(false).Println("Omega/Fastbuilder 启动时出现错误")
 			panic(err)
 		}
-		err = cmd.Wait()
-		// 如果运行到这里, 说明Fastbuilder出现错误或退出运行了
-		cmd.Process.Kill()
 		// 判断是否正常退出
-		if isStopped {
+		if err := cmd.Wait(); err == nil {
 			pterm.Success.Println("Omega/Fastbuilder 已正常退出, 启动器将结束运行")
-			time.Sleep(time.Second * 3)
-			break
-		} else {
-			stop <- "stop!!"
-			errInfo := "Oh no! Fastbuilder crashed!"
-			if err != nil {
-				errInfo += fmt.Sprintf("(%s)", err.Error())
-			}
-			pterm.Error.Printfln(errInfo) // ?
+			return
 		}
 		// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
-		if time.Since(startTime) < time.Minute {
-			if restartTime < 3600 {
-				restartTime = restartTime + 60
-			}
-		} else {
+		if restartTime < 3600 {
+			restartTime = restartTime + 60
+		}
+		// 运行时间大于1分钟时视为正常运行, 设置为立即重启
+		if time.Since(startTime) > time.Minute {
 			restartTime = 0
 		}
-		pterm.Warning.Printf("Omega/Fastbuilder 将在%d秒后重新启动 (按回车立即重启)", restartTime)
 		// 等待输入或计时结束
-		select {
-		case <-readC:
-			restartTime = 0
-		case <-time.After(time.Second * time.Duration(restartTime)):
-			// 换行
-			fmt.Println()
+		if result, isUser := utils.GetInputYNInTime("是否需要重启 Omega/Fastbuilder?", int32(restartTime)); result {
+			if isUser {
+				restartTime = 0
+			}
+			continue
 		}
+		pterm.Success.Println("已选择无需重启 Omega/Fastbuilder, 启动器将结束运行")
+		break
 	}
 }

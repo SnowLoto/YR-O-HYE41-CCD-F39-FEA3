@@ -1,14 +1,11 @@
 package fastbuilder
 
 import (
-	"encoding/json"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/pterm/pterm"
 )
 
 // 判断是否为token
@@ -45,43 +42,21 @@ func deleteCurrentFBToken() bool {
 	return utils.RemoveFile(tokenPath)
 }
 
-// 请求token
-func requestToken() string {
-	// 尝试加载现有的token
-	currentFbToken := loadCurrentFBToken()
-	// 读取成功, 提示是否使用
-	if currentFbToken != "" && IsToken(currentFbToken) {
-		if utils.GetInputYN("要使用当前设备储存的 Token 吗?") {
-			return currentFbToken
-		}
-		deleteCurrentFBToken()
-	}
-	// 获取新的token
-	Code := utils.GetValidInput("请输入 Fastbuilder 账号, 或者输入 Token")
-	// 输入token则直接返回
-	if IsToken(Code) {
-		pterm.Success.Println("输入内容为 Token")
-		return Code
-	}
-	// 根据输入信息构建新token
-	tokenstruct := &map[string]interface{}{
-		"encrypt_token": true,
-		"username":      Code,
-		"password":      utils.GetPswInput("请输入 Fastbuilder 密码"),
-	}
-	token, err := json.Marshal(tokenstruct)
-	if err != nil {
-		panic(err)
-	}
-	return string(token)
-}
-
 // 配置Token
 func FBTokenSetup(cfg *launcher.Config) {
-	if cfg.FBToken != "" {
-		if utils.GetInputYN("要使用上次的 Fastbuilder 账号登录吗?") {
+	// 配置文件
+	if IsToken(cfg.FBToken) && utils.GetInputYN("要使用配置文件的 FBToken 吗?") {
+		return
+	}
+	// 设备文件
+	if currentFbToken := loadCurrentFBToken(); IsToken(currentFbToken) {
+		if utils.GetInputYN("要使用当前设备储存的 FBToken 吗?") {
+			cfg.FBToken = currentFbToken
 			return
+		} else {
+			deleteCurrentFBToken()
 		}
 	}
-	cfg.FBToken = requestToken()
+	// 用户输入
+	cfg.FBToken = utils.GetInput("请输入 FBToken (没有或账密登录请留空)")
 }

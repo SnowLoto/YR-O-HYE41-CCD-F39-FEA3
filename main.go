@@ -54,8 +54,8 @@ func main() {
 	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 询问是否使用上一次的配置
-	if fastbuilder.CheckExecFile() && launcherConfig.FBToken != "" && launcherConfig.RentalCode != "" {
-		if utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10) {
+	if fastbuilder.CheckExecFile() && launcherConfig.RentalCode != "" {
+		if result, _ := utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10); result {
 			// 更新FB
 			if launcherConfig.UpdateFB {
 				fastbuilder.Update(launcherConfig, false)
@@ -93,12 +93,13 @@ func main() {
 				if launcherConfig.EnableCQHttp = utils.GetInputYN("此时配置 go-cqhttp 会导致新生成的组件均为非启用状态, 要继续吗?"); !launcherConfig.EnableCQHttp {
 					// 直接启动Omega或者FB
 					fastbuilder.Run(launcherConfig)
+					return
 				}
 			}
 			launcherConfig.BlockCQHttpOutput = utils.GetInputYN("需要在配置完成后屏蔽 go-cqhttp 的输出吗?")
 			cqhttp.CQHttpEnablerHelper()
 			if launcherConfig.EnableSignServer = utils.GetInputYN("需要启动器启动 Sign Server 吗?"); launcherConfig.EnableSignServer {
-				launcherConfig.SignServerSoVersion = utils.GetInput("请输入 Sign Server 依赖的文件版本 (不输入则为8.9.63)")
+				launcherConfig.SignServerSoVersion = utils.GetInput("请输入 Sign Server 依赖的文件版本 (没有请留空, 默认使用8.9.63)")
 			}
 			cqhttp.Run(launcherConfig)
 		}
