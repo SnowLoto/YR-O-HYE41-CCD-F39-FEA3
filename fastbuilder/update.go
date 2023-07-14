@@ -28,9 +28,6 @@ var (
 
 	// Github 官方 Libre 分支仓库
 	OFFICIAL_LIBRE_REPO = "https://github.com/LNSSPsd/PhoenixBuilder/releases/download/"
-
-	// 本地 (自用)
-	LOCAL_REPO = "http://fileserver:12333/res/"
 )
 
 type release struct {
@@ -88,7 +85,7 @@ func selectRepo(cfg *launcher.Config, reselect bool) {
 			"6. 官方 Libre 分支仓库\n",
 			"7. 官方 Libre 分支镜像仓库",
 		)
-		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 8)
+		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 7)
 	}
 	switch cfg.Repo {
 	case 1:
@@ -112,9 +109,6 @@ func selectRepo(cfg *launcher.Config, reselect bool) {
 	case 7:
 		STORAGE_REPO = GITHUB_MIRROR + OFFICIAL_LIBRE_REPO + getLatestLibreReleaseVersion() + "/"
 		pterm.Info.Printfln("将使用 官方 Libre 分支镜像仓库 (%s) 进行更新", STORAGE_REPO)
-	case 8:
-		STORAGE_REPO = LOCAL_REPO
-		pterm.Info.Printfln("将使用 本地仓库 (%s) 进行更新", STORAGE_REPO)
 	default:
 		panic("无效的仓库, 请重新配置")
 	}
