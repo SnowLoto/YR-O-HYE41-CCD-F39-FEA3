@@ -12,7 +12,7 @@ func GetCacheDir() string {
 
 func GetCurrentDir() string {
 	if IsDocker() {
-		return filepath.Join("workspace")
+		return filepath.Join("/", "workspace")
 	}
 	pathExecutable, err := os.Executable()
 	if err != nil {
@@ -25,7 +25,7 @@ func GetCurrentDataDir() string {
 	// Android环境下, 尝试将数据文件放在 /sdcard/Download
 	currentPlantform := plantform.GetPlantform()
 	if currentPlantform == plantform.Android_arm64 || currentPlantform == plantform.Android_x86_64 {
-		androidDownloadDir := filepath.Join("sdcard", "Download")
+		androidDownloadDir := filepath.Join("/", "sdcard", "Download")
 		if IsDir(androidDownloadDir) && MkDir(filepath.Join(androidDownloadDir, "omega_storage")) {
 			return androidDownloadDir
 		}
