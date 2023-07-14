@@ -9,14 +9,15 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
     && apt-get install -y tzdata \
     && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone \
     && dpkg-reconfigure -f noninteractive tzdata \
-    && mkdir /ome && cd /ome \
-    # 如果下载过慢, 可以替换成其他url
-    && wget https://github.com/Liliya233/omega_launcher/releases/latest/download/omega_launcher_linux_amd64 \
-    && chmod +x /ome/omega_launcher_linux_amd64 \
+    && mkdir /ome \
     && mkdir /workspace \
     && apt clean -yq && apt autoclean -yq && apt autoremove -yq && rm -rf /var/lib/apt/lists/* \
     && echo "#!/bin/bash" >> /ome/launcher_liliya \
     && echo "sleep 1" >> /ome/launcher_liliya \
+    && echo "clear" >> /ome/launcher_liliya \
+    # 可以替换成其他url, 每次启动时都会进行下载
+    && echo "wget https://github.com/Liliya233/omega_launcher/releases/latest/download/omega_launcher_linux_amd64 -P /ome" >> /ome/launcher_liliya \
+    && echo "chmod +x /ome/omega_launcher_linux_amd64" >> /ome/launcher_liliya \
     && echo "clear" >> /ome/launcher_liliya \
     && echo 'echo -e "\033[1;33m注意: 如果使用MCSM, 请在终端设置中打开仿真终端, 并直接在命令行中输入内容\033[0m"' >> /ome/launcher_liliya \
     && echo "cd /workspace" >> /ome/launcher_liliya \
