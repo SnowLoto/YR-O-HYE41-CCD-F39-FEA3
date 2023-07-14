@@ -40,6 +40,7 @@ func Run(cfg *launcher.Config) {
 			if currentToken := loadCurrentFBToken(); IsToken(currentToken) {
 				cfg.FBToken = currentToken
 				launcher.SaveConfig(cfg)
+				break
 			}
 			time.Sleep(time.Second)
 		}
