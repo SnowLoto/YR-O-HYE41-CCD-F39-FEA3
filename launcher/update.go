@@ -54,6 +54,8 @@ func CheckUpdate(currentVer string) {
 					return
 				}
 			}
+			// 更新成功后, 修改为更新文件版本
+			currentVer = release.TagName
 		}
 	}
 	// 每小时检查一次更新
