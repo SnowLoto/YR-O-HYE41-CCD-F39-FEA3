@@ -52,6 +52,8 @@ func Run(cfg *launcher.Config) {
 		startTime := time.Now()
 		// 启动时提示信息
 		pterm.Success.Println("正在启动 Omega/Fastbuilder, 请根据其提示进行操作")
+		// 给予执行权限
+		os.Chmod(getFBExecPath(), 0755)
 		// 启动命令
 		cmd := exec.Command(getFBExecPath(), setupCmdArgs(cfg)...)
 		cmd.Dir = filepath.Join(utils.GetCurrentDataDir())

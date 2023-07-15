@@ -63,6 +63,8 @@ func Run(launcherCfg *launcher.Config) {
 	updateCQConfigAddress(availableAddress, startingSignServerAddress)
 	// 启动前保存一次启动器配置
 	launcher.SaveConfig(launcherCfg)
+	// 给予执行权限
+	os.Chmod(GetCqHttpExec(), 0755)
 	// 配置执行目录
 	cmd := exec.Command(GetCqHttpExec(), []string{"-faststart", "-update-protocol"}...)
 	cmd.Dir = filepath.Join(GetCQHttpDir())

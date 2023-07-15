@@ -59,7 +59,7 @@ func JavaDeploy() {
 		utils.DownloadFile(javaDownloadUrl+fileName, downloadDst)
 	}
 	pterm.Warning.Printfln("正在解压 Java 运行环境文件..")
-	fp, err := os.OpenFile(downloadDst, os.O_RDONLY, 0)
+	fp, err := os.OpenFile(downloadDst, os.O_RDONLY, 0755)
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +69,6 @@ func JavaDeploy() {
 			utils.RemoveFile(downloadDst)
 			panic(err)
 		}
-		os.Chmod(javaExecFile, 0755)
 	} else {
 		if err := utils.UnZip(fp, uncompressDir); err != nil {
 			utils.RemoveFile(downloadDst)
