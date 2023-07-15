@@ -1,5 +1,8 @@
 FROM ubuntu:latest
 LABEL maintainer="Liliya233"
+
+ARG TIME_ZONE=Asia/Shanghai
+
 RUN sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
     && apt-get -yq update \
     && apt-get install ca-certificates -y \
@@ -24,5 +27,7 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.bfsu.edu.cn/g' /etc/apt/sources.list \
     && chmod +x /ome/launcher_liliya \
     && mkdir -p /root/.config && mkdir -p /root/.config/fastbuilder \
     && echo -n 'zh_CN' > /root/.config/fastbuilder/language
+
 WORKDIR /workspace
+
 ENTRYPOINT [ "/ome/launcher_liliya" ]
