@@ -3,5 +3,5 @@
     "ZipName": "qsign-1.1.5.onejar.zip",
     "ZipSize": 60609346,
     "UnzipDirName": "unidbg-fetch-qsign-shadow-1.1.5",
-    "DefaultSoVersion": "8.9.63"
+    "SoVersion": "8.9.63"
 }
