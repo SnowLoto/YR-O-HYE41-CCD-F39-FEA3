@@ -28,13 +28,13 @@ func MkDir(path string) bool {
 	return true
 }
 
-func GetFileSize(filePath string) (int64, error) {
+func GetFileSize(filePath string) int64 {
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
-		return 0, err
+		return 0
 	}
 	fileSize := fileInfo.Size()
-	return fileSize, nil
+	return fileSize
 }
 
 func GetFileData(filePath string) ([]byte, error) {

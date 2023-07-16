@@ -15,6 +15,10 @@ import (
 	"github.com/pterm/pterm"
 )
 
+var (
+	MIRROR_URL = "https://www.omega-download.top/"
+)
+
 func DownloadBytes(sourceUrl string) []byte {
 	// Get the data
 	resp, err := http.Get(sourceUrl)
@@ -88,4 +92,12 @@ func DownloadFile(sourceURL string, destinationPath string) {
 		pterm.Fatal.WithFatal(false).Println("写入文件时出现错误")
 		panic(err)
 	}
+}
+
+func DownloadBytesWithMirror(sourceUrl string) []byte {
+	return DownloadBytes(MIRROR_URL + sourceUrl)
+}
+
+func DownloadFileWithMirror(sourceURL string, destinationPath string) {
+	DownloadFile(MIRROR_URL+sourceURL, destinationPath)
 }
