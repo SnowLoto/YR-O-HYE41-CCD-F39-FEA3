@@ -32,6 +32,6 @@ func GetSignServerRemoteData() *SignServerRemoteData {
 		}
 		signServerRemoteData = &newSignServerRemoteData
 	}
-	// 返回结构体
+	// 返回结构体指针
 	return signServerRemoteData
 }
