@@ -36,14 +36,14 @@ func WriteFileData(fname string, data []byte) error {
 
 func main() {
 	var cqList []string = []string{
-		"./go-cqhttp_darwin_amd64",
-		"./go-cqhttp_darwin_arm64",
-		"./go-cqhttp_linux_amd64",
-		"./go-cqhttp_linux_arm64",
-		"./go-cqhttp_windows_amd64.exe",
-		"./go-cqhttp_windows_arm64.exe",
-		"./go-cqhttp_android_amd64",
-		"./go-cqhttp_android_arm64",
+		"./build/go-cqhttp_darwin_amd64",
+		"./build/go-cqhttp_darwin_arm64",
+		"./build/go-cqhttp_linux_amd64",
+		"./build/go-cqhttp_linux_arm64",
+		"./build/go-cqhttp_windows_amd64.exe",
+		"./build/go-cqhttp_windows_arm64.exe",
+		"./build/go-cqhttp_android_amd64",
+		"./build/go-cqhttp_android_arm64",
 	}
 
 	for _, inFile := range cqList {
@@ -68,6 +68,7 @@ func main() {
 		}
 
 		fmt.Printf(" compress %.3f\n", float32(len(newData))/float32(len(origData)))
+		os.Remove(inFile)
 	}
 
 	// var compressedData []byte
