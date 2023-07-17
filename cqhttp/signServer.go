@@ -51,9 +51,10 @@ func setupConfig(configPath string, host string, port int, uin int64, androidID 
 		panic("解析 Sign Server 配置时出现错误: " + err.Error())
 	}
 	// 修改配置
-	config.Key = "233233"
+	config.Key = "114514"
 	config.Server.Host = host
 	config.Server.Port = port
+	config.Unidbg.Dynarmic = true
 	modifiedConfigBytes, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		panic("序列化配置文件时出现错误: " + err.Error())
@@ -137,7 +138,7 @@ func SignServerStart() string {
 	// 获取uin
 	if cqCfg := getCQConfig(); cqCfg != nil {
 		configPath := filepath.Join(utils.GetCacheDir(), "SignServer", remote.UnzipDirName, "txlib", remote.SoVersion, "config.json")
-		setupConfig(configPath, "0.0.0.0", availablePort, cqCfg.Account.Uin, device.AndroidId)
+		setupConfig(configPath, "127.0.0.1", availablePort, cqCfg.Account.Uin, device.AndroidId)
 	} else {
 		pterm.Error.Println("Sign Server 启动失败, 未能够从 go-cqhttp 配置文件中获取QQ账号")
 		return "-"

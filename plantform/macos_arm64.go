@@ -7,7 +7,8 @@ import (
 	_ "embed"
 )
 
-//go:embed cqhttp_brotli/go-cqhttp_darwin_arm64.brotli
-var embedding_cqhttp []byte
-var PLANTFORM = MACOS_arm64
-var OriginExecName = "omega_launcher_darwin_arm64"
+var (
+	PLANTFORM      = MACOS_arm64
+	OriginExecName = "omega_launcher_darwin_arm64"
+	CQHttpName     = "go-cqhttp_darwin_arm64"
+)

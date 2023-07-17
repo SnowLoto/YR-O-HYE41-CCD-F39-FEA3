@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"omega_launcher/deploy"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/launcher"
 	"omega_launcher/utils"
@@ -37,10 +38,7 @@ func Run(launcherCfg *launcher.Config) {
 		panic("cqhttp_storage 目录不存在, 请使用启动器配置一次 go-cqhttp")
 	}
 	// 考虑到有自定义需求的用户很少需要启动器配置cqhttp, 故强制更新cqhttp程序, 以解决需要手动删除更新的问题
-	if err := utils.WriteFileData(GetCqHttpExec(), GetCqHttpBinary()); err != nil {
-		pterm.Fatal.WithFatal(false).Println("解压 go-cqhttp 时遇到问题")
-		panic(err)
-	}
+	deploy.CQHttpDeploy()
 	// 读取Omega配置
 	utils.MkDir(filepath.Join(fastbuilder.GetOmegaStorageDir(), "配置"))
 	// 配置地址同步

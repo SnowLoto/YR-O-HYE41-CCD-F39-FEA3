@@ -11,14 +11,14 @@ const (
 	WINDOWS_x86_64 = "windows_x86_64"
 )
 
-func GetCqHttpBinary() []byte {
-	return embedding_cqhttp
-}
-
 func GetPlantform() string {
 	return PLANTFORM
 }
 
 func GetOringinExecName() string {
 	return OriginExecName
+}
+
+func GetCQHttpName() string {
+	return CQHttpName
 }

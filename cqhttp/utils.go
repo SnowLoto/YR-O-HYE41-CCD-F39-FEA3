@@ -2,7 +2,6 @@ package cqhttp
 
 import (
 	"bytes"
-	"io"
 	"net/url"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/plantform"
@@ -10,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/andybalholm/brotli"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
@@ -20,25 +18,12 @@ func GetCQHttpDir() string {
 }
 
 func GetCqHttpExec() string {
-	cqhttp := "cqhttp"
-	if plantform.GetPlantform() == plantform.WINDOWS_x86_64 || plantform.GetPlantform() == plantform.WINDOWS_arm64 {
-		cqhttp = "cqhttp.exe"
-	}
-	cqhttp = filepath.Join(utils.GetCurrentDir(), cqhttp)
+	cqhttp := filepath.Join(utils.GetCurrentDir(), plantform.GetCQHttpName())
 	p, err := filepath.Abs(cqhttp)
 	if err != nil {
 		panic(err)
 	}
 	return p
-}
-
-func GetCqHttpBinary() []byte {
-	var execBytes []byte
-	var err error
-	if execBytes, err = io.ReadAll(brotli.NewReader(bytes.NewReader(plantform.GetCqHttpBinary()))); err != nil {
-		panic(err)
-	}
-	return execBytes
 }
 
 func GetCQHttpHash() string {

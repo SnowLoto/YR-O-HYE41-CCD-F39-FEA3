@@ -19,8 +19,11 @@ var defaultConfigBytes []byte
 // Copy from go-cqhttp
 // Account 账号配置
 type Account struct {
-	Uin      int64  `yaml:"uin"`
-	Password string `yaml:"password"`
+	Uin                    int64  `yaml:"uin"`
+	Password               string `yaml:"password"`
+	SignServer             string `yaml:"sign-server"`
+	IsLowVersionSignServer bool   `yaml:"is-below-110"`
+	SignServerKey          string `yaml:"key"`
 }
 
 // Config 总配置文件
@@ -57,12 +60,22 @@ func updateCQConfigAddress(wsAddress, signServerAddress string) {
 		// 保留账密信息
 		cfgStr = strings.Replace(cfgStr, "[QQ账号]", fmt.Sprint(cqCfg.Account.Uin), 1)
 		cfgStr = strings.Replace(cfgStr, "[QQ密码]", cqCfg.Account.Password, 1)
-		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", signServerAddress, 1)
+		// SignServer
+		if signServerAddress != "" {
+			cqCfg.Account.SignServer = signServerAddress
+			cqCfg.Account.IsLowVersionSignServer = false
+			cqCfg.Account.SignServerKey = "114514"
+		}
+		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", cqCfg.Account.SignServer, 1)
+		cfgStr = strings.Replace(cfgStr, "[IsLowVersionSignServer]", fmt.Sprint(cqCfg.Account.IsLowVersionSignServer), 1)
+		cfgStr = strings.Replace(cfgStr, "[SignServerKey]", cqCfg.Account.SignServerKey, 1)
 	} else {
 		// 默认配置
 		cfgStr = strings.Replace(cfgStr, "[QQ账号]", "1233456", 1)
 		cfgStr = strings.Replace(cfgStr, "[QQ密码]", "", 1)
 		cfgStr = strings.Replace(cfgStr, "[SignServer地址]", "-", 1)
+		cfgStr = strings.Replace(cfgStr, "[IsLowVersionSignServer]", "false", 1)
+		cfgStr = strings.Replace(cfgStr, "[SignServerKey]", "114514", 1)
 	}
 	// 写入新配置
 	writeCQConfig(cfgStr)
@@ -76,12 +89,14 @@ func initCQConfig() {
 	// 要求输入cqhttp配置信息
 	cfgStr := strings.Replace(string(defaultConfigBytes), "[QQ账号]", fmt.Sprint(utils.GetInt64Input("请输入QQ账号")), 1)
 	cfgStr = strings.Replace(cfgStr, "[QQ密码]", utils.GetPswInput("请输入QQ密码"), 1)
+	cfgStr = strings.Replace(cfgStr, "[WS地址]", "null", 1)
 	SignServer := utils.GetInput("请输入 Sign Server 地址 (没有或使用启动器配置请留空)")
 	if SignServer == "" {
 		SignServer = "-"
 	}
 	cfgStr = strings.Replace(cfgStr, "[SignServer地址]", SignServer, 1)
-	cfgStr = strings.Replace(cfgStr, "[WS地址]", "null", 1)
+	cfgStr = strings.Replace(cfgStr, "[IsLowVersionSignServer]", "false", 1)
+	cfgStr = strings.Replace(cfgStr, "[SignServerKey]", "114514", 1)
 	// 写入新配置
 	writeCQConfig(cfgStr)
 }
