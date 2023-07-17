@@ -150,7 +150,6 @@ func SignServerStart() string {
 	}
 	// 启动命令
 	cmd := exec.Command(cmdStr, []string{fmt.Sprintf("--basePath=%s", filepath.Join(utils.GetCacheDir(), "SignServer", remote.UnzipDirName, "txlib", remote.SoVersion))}...)
-	fmt.Println(cmd.String())
 	// 配置Java运行环境
 	if !deploy.CheckJava() {
 		pterm.Warning.Println("系统未安装Java, 将尝试安装对应的 Java 环境")
