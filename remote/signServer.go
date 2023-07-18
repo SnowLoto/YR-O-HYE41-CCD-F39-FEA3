@@ -24,7 +24,10 @@ func GetSignServerRemoteData() *SignServerRemoteData {
 	if signServerRemoteData == nil {
 		// 下载远程数据
 		pterm.Warning.Println("正在获取 Sign Server 配置所需的数据..")
-		bytes := utils.DownloadBytesWithMirror(signServerRemoteDataUrl)
+		bytes, err := utils.DownloadBytesWithMirror(signServerRemoteDataUrl)
+		if err != nil {
+			panic(err)
+		}
 		// 解析远程数据
 		newSignServerRemoteData := SignServerRemoteData{}
 		if err := json.Unmarshal(bytes, &newSignServerRemoteData); err != nil {

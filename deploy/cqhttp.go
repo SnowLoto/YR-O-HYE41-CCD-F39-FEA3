@@ -20,7 +20,10 @@ func isCQHttpCache() bool {
 	// brotli名称
 	brotliName := plantform.GetCQHttpName() + ".brotli"
 	// 获取文件内容
-	jsonData := utils.DownloadBytesWithMirror(cqhttpDownloadUrl + "hashes.json")
+	jsonData, err := utils.DownloadBytesWithMirror(cqhttpDownloadUrl + "hashes.json")
+	if err != nil {
+		panic(err)
+	}
 	// 解析文件内容
 	hashMap := make(map[string]string, 0)
 	if err := json.Unmarshal([]byte(jsonData), &hashMap); err != nil {
@@ -44,7 +47,10 @@ func CQHttpDeploy() {
 	// 检查缓存文件
 	if !isCQHttpCache() {
 		pterm.Warning.Println("正在为你下载最新的 go-cqhttp, 请保持耐心..")
-		utils.DownloadFileWithMirror(cqhttpDownloadUrl+brotliName, brotliDir)
+		err := utils.DownloadFileWithMirror(cqhttpDownloadUrl+brotliName, brotliDir)
+		if err != nil {
+			panic(err)
+		}
 	}
 	var brotliBytes, execBytes []byte
 	var err error

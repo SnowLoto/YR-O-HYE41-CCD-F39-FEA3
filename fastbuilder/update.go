@@ -2,32 +2,15 @@ package fastbuilder
 
 import (
 	"encoding/json"
+	"fmt"
 	"omega_launcher/launcher"
+	"omega_launcher/plantform"
+	"omega_launcher/remote"
 	"omega_launcher/utils"
 	"strings"
 	"time"
 
 	"github.com/pterm/pterm"
-)
-
-var (
-	// Fastbuilder远程仓库地址
-	STORAGE_REPO = OFFICIAL_REPO
-
-	// Github 镜像地址
-	GITHUB_MIRROR = "https://www.omega-download.top/"
-
-	// Github 官方仓库
-	OFFICIAL_REPO = "https://github.com/LNSSPsd/PhoenixBuilder/releases/latest/download/"
-
-	// 海的官方镜像仓库
-	SEA_REPO = "https://likemc.xyz/build/"
-
-	// Github rnhws-Team 预览版仓库
-	RNHWS_TEAM_REPO = "https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/"
-
-	// Github 官方 Libre 分支仓库
-	OFFICIAL_LIBRE_REPO = "https://github.com/LNSSPsd/PhoenixBuilder/releases/download/"
 )
 
 type release struct {
@@ -39,9 +22,13 @@ type release struct {
 func getLatestLibreReleaseVersion() string {
 	pterm.Warning.Printfln("正在获取最新的 Libre-release 版本号..")
 	var releases []release
-	err := json.Unmarshal(utils.DownloadBytes("https://api.github.com/repos/LNSSPsd/PhoenixBuilder/releases"), &releases)
+	bytes, err := utils.DownloadBytes("https://api.github.com/repos/LNSSPsd/PhoenixBuilder/releases")
 	if err != nil {
-		pterm.Error.Println("正在获取最新的 Libre-release 版本号时出现问题")
+		pterm.Error.Println("获取最新的 Libre-release 版本号时出现问题")
+		panic(err)
+	}
+	if err := json.Unmarshal(bytes, &releases); err != nil {
+		pterm.Error.Println("解析最新的 Libre-release 版本号时出现问题")
 		panic(err)
 	}
 	var latestPreRelease release
@@ -71,62 +58,69 @@ func getLatestLibreReleaseVersion() string {
 	return latestPreRelease.TagName
 }
 
-// 仓库选择
-func selectRepo(cfg *launcher.Config, reselect bool) {
-	if reselect || cfg.Repo < 1 || cfg.Repo > 8 {
-		// 不再于列表提示自用仓库
-		utils.ConfPrinter.Println(
-			"当前可选择的仓库有：\n",
-			"1. 官方仓库"+pterm.Yellow(" (推荐)\n"),
-			"2. 官方镜像仓库\n",
-			"3. 海的官方镜像仓库\n",
-			"4. rnhws-Team 预览版仓库\n",
-			"5. rnhws-Team 预览版镜像仓库\n",
-			"6. 官方 Libre 分支仓库\n",
-			"7. 官方 Libre 分支镜像仓库",
+func UpdateRepo(cfg *launcher.Config) {
+	// 获取远程数据
+	remoteDatas := remote.GetFastbuilderRepoRemoteData()
+	// 仓库切片
+	repos := []launcher.ConfigRepo{}
+	// 额外提示信息样式
+	mirrorTip := pterm.Green("[镜像]")
+	// 提示信息切片
+	tips := []string{"当前可选择的仓库有："}
+	for _, data := range remoteDatas {
+		// 基本链接
+		repos = append(repos,
+			launcher.ConfigRepo{
+				Name:         data.Name,
+				Url:          data.Url,
+				IsPreRelease: data.IsPreRelease,
+			},
 		)
-		cfg.Repo = utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, 7)
+		tips = append(tips, fmt.Sprintf("%v. %v", len(tips), data.Name))
+		// 是否 Github
+		if data.IsGithub {
+			repos = append(repos,
+				launcher.ConfigRepo{
+					Name:         fmt.Sprintf("%v %v", data.Name, mirrorTip),
+					Url:          utils.MIRROR_URL + data.Url,
+					IsPreRelease: data.IsPreRelease,
+				},
+			)
+			tips = append(tips, fmt.Sprintf("%v. %v %v", len(tips), data.Name, mirrorTip))
+		}
 	}
-	switch cfg.Repo {
-	case 1:
-		STORAGE_REPO = OFFICIAL_REPO
-		pterm.Info.Printfln("将使用 官方仓库 (%s) 进行更新", STORAGE_REPO)
-	case 2:
-		STORAGE_REPO = GITHUB_MIRROR + OFFICIAL_REPO
-		pterm.Info.Printfln("将使用 官方镜像仓库 (%s) 进行更新", STORAGE_REPO)
-	case 3:
-		STORAGE_REPO = SEA_REPO
-		pterm.Info.Printfln("将使用 海的官方镜像仓库 (%s) 进行更新", STORAGE_REPO)
-	case 4:
-		STORAGE_REPO = RNHWS_TEAM_REPO
-		pterm.Info.Printfln("将使用 rnhws-Team 预览版仓库 (%s) 进行更新", STORAGE_REPO)
-	case 5:
-		STORAGE_REPO = GITHUB_MIRROR + RNHWS_TEAM_REPO
-		pterm.Info.Printfln("将使用 rnhws-Team 预览版镜像仓库 (%s) 进行更新", STORAGE_REPO)
-	case 6:
-		STORAGE_REPO = OFFICIAL_LIBRE_REPO + getLatestLibreReleaseVersion() + "/"
-		pterm.Info.Printfln("将使用 官方 Libre 分支仓库 (%s) 进行更新", STORAGE_REPO)
-	case 7:
-		STORAGE_REPO = GITHUB_MIRROR + OFFICIAL_LIBRE_REPO + getLatestLibreReleaseVersion() + "/"
-		pterm.Info.Printfln("将使用 官方 Libre 分支镜像仓库 (%s) 进行更新", STORAGE_REPO)
-	default:
-		panic("无效的仓库, 请重新配置")
-	}
+	// 打印仓库列表
+	utils.ConfPrinter.Println(strings.Join(tips, "\n"))
+	cfg.Repo = &repos[utils.GetIntInputInScope("请输入序号来选择一个仓库", 1, len(tips))-1]
 }
 
 // 下载FB
-func download() {
-	utils.DownloadFile(STORAGE_REPO+GetFBExecName(), getFBExecPath())
+func download(url string) {
+	err := utils.DownloadFile(url+plantform.GetFastBuilderName(), getFBExecPath())
+	if err != nil {
+		panic(err)
+	}
 }
 
 // 升级FB
-func Update(cfg *launcher.Config, reselect bool) {
-	selectRepo(cfg, reselect)
-	pterm.Warning.Println("正在从指定仓库获取更新信息..")
-	if getRemoteFBHash(STORAGE_REPO) == getCurrentFBHash() {
-		pterm.Success.Println("太好了, 你的 Fastbuilder 已经是最新的了!")
+func Update(cfg *launcher.Config) {
+	// 检查是否为空的url
+	if cfg.Repo == nil || cfg.Repo.Url == "" {
+		pterm.Warning.Println("FastBuilder 更新链接为空, 请重新选择仓库来启用更新功能")
+		cfg.UpdateFB = false
+		return
+	}
+	pterm.Warning.Println(fmt.Sprintf("正在从 %v 获取更新信息..", cfg.Repo.Name))
+	// 更新使用的url
+	url := cfg.Repo.Url
+	// 如果是预构建, 需要获取tag来拼接为完整的url
+	if cfg.Repo.IsPreRelease {
+		url = url + getLatestLibreReleaseVersion() + "/"
+	}
+	if getRemoteFBHash(url) == getCurrentFBHash() {
+		pterm.Success.Println("太好了, 你的 FastBuilder 已经是最新的了!")
 	} else {
-		pterm.Warning.Println("正在为你下载最新的 Fastbuilder, 请保持耐心..")
-		download()
+		pterm.Warning.Println("正在为你下载最新的 FastBuilder, 请保持耐心..")
+		download(url)
 	}
 }

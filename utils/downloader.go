@@ -20,12 +20,11 @@ var (
 	MIRROR_URL = "https://www.omega-download.top/"
 )
 
-func DownloadBytes(sourceUrl string) []byte {
+func DownloadBytes(sourceUrl string) ([]byte, error) {
 	// Get the data
 	resp, err := http.Get(sourceUrl)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("下载资源时出现错误")
-		panic(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 	// Size
@@ -41,42 +40,37 @@ func DownloadBytes(sourceUrl string) []byte {
 	// Buffer
 	contents := bytes.NewBuffer([]byte{})
 	if _, err := io.Copy(contents, barReader); err != nil {
-		panic(err)
+		return nil, err
 	}
-	return contents.Bytes()
+	return contents.Bytes(), nil
 }
 
-func DownloadFile(sourceURL string, destinationPath string) {
+func DownloadFile(sourceUrl string, destinationPath string) error {
 	// 获取目录路径
 	destinationDir := filepath.Dir(destinationPath)
 	// 创建目录
 	if !MkDir(destinationDir) {
-		err := errors.New("创建目录时出现错误")
-		pterm.Fatal.WithFatal(false).Println(err.Error())
-		panic(err)
+		return errors.New("创建目录时出现错误")
 	}
 	// 发起HTTP GET请求
-	resp, err := http.Get(sourceURL)
+	resp, err := http.Get(sourceUrl)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("下载资源时出现错误")
-		panic(err)
+		return err
 	}
 	defer resp.Body.Close()
 	// 检查响应状态码
 	if resp.StatusCode != http.StatusOK {
-		panic(fmt.Errorf("下载失败，状态码：%d", resp.StatusCode))
+		return fmt.Errorf("下载失败，状态码：%d", resp.StatusCode)
 	}
 	// 获取文件大小
 	size, err := strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 64)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("获取文件大小时出现错误")
-		panic(err)
+		return err
 	}
 	// 创建文件
 	file, err := os.Create(destinationPath)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("创建文件时出现错误")
-		panic(err)
+		return err
 	}
 	defer file.Close()
 	// 创建进度条
@@ -90,15 +84,30 @@ func DownloadFile(sourceURL string, destinationPath string) {
 	// 将响应体写入文件并显示进度
 	_, err = io.Copy(writer, resp.Body)
 	if err != nil {
-		pterm.Fatal.WithFatal(false).Println("写入文件时出现错误")
+		return err
+	}
+	return nil
+}
+
+func DownloadBytesWithMirror(sourceUrl string) ([]byte, error) {
+	if bytes, err := DownloadBytes(MIRROR_URL + sourceUrl); err == nil {
+		return bytes, nil
+	}
+	pterm.Warning.Println("下载时出现错误, 将再次尝试下载..")
+	if bytes, err := DownloadBytes(sourceUrl); err == nil {
+		return bytes, nil
+	} else {
 		panic(err)
 	}
 }
 
-func DownloadBytesWithMirror(sourceUrl string) []byte {
-	return DownloadBytes(MIRROR_URL + sourceUrl)
-}
-
-func DownloadFileWithMirror(sourceURL string, destinationPath string) {
-	DownloadFile(MIRROR_URL+sourceURL, destinationPath)
+func DownloadFileWithMirror(sourceUrl string, destinationPath string) error {
+	if DownloadFile(MIRROR_URL+sourceUrl, destinationPath) == nil {
+		return nil
+	}
+	pterm.Warning.Println("下载时出现错误, 将再次尝试下载..")
+	if err := DownloadFile(sourceUrl, destinationPath); err != nil {
+		return err
+	}
+	return nil
 }

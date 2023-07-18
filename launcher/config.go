@@ -5,17 +5,24 @@ import (
 	"path/filepath"
 )
 
+// 启动器仓库配置文件结构
+type ConfigRepo struct {
+	Name         string `json:"名称"`
+	Url          string `json:"URL"`
+	IsPreRelease bool   `json:"是否预构建"`
+}
+
 // 启动器配置文件结构
 type Config struct {
-	Repo              int    `json:"仓库序号"`
-	RentalCode        string `json:"租赁服号"`
-	RentalPasswd      string `json:"租赁服密码"`
-	FBToken           string `json:"FBToken"`
-	EnableCQHttp      bool   `json:"是否开启go-cqhttp"`
-	StartOmega        bool   `json:"是否启动Omega"`
-	UpdateFB          bool   `json:"是否更新FB"`
-	BlockCQHttpOutput bool   `json:"是否屏蔽go-cqhttp的内容输出"`
-	EnableSignServer  bool   `json:"是否使用SignServer"`
+	Repo              *ConfigRepo `json:"仓库信息"`
+	RentalCode        string      `json:"租赁服号"`
+	RentalPasswd      string      `json:"租赁服密码"`
+	FBToken           string      `json:"FBToken"`
+	EnableCQHttp      bool        `json:"是否开启go-cqhttp"`
+	StartOmega        bool        `json:"是否启动Omega"`
+	UpdateFB          bool        `json:"是否更新FB"`
+	BlockCQHttpOutput bool        `json:"是否屏蔽go-cqhttp的内容输出"`
+	EnableSignServer  bool        `json:"是否使用SignServer"`
 }
 
 // 保存配置文件

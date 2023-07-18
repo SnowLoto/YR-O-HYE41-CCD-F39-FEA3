@@ -51,7 +51,7 @@ func Run(cfg *launcher.Config) {
 		// 记录启动时间
 		startTime := time.Now()
 		// 启动时提示信息
-		pterm.Success.Println("正在启动 Omega/Fastbuilder, 请根据其提示进行操作")
+		pterm.Success.Println("正在启动 Omega/FastBuilder, 请根据其提示进行操作")
 		// 给予执行权限
 		os.Chmod(getFBExecPath(), 0755)
 		// 启动命令
@@ -60,14 +60,14 @@ func Run(cfg *launcher.Config) {
 		cmd.Stdout = os.Stdout
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
-		// 启动并持续运行Fastbuilder
+		// 启动并持续运行FastBuilder
 		if err := cmd.Start(); err != nil {
-			pterm.Fatal.WithFatal(false).Println("Omega/Fastbuilder 启动时出现错误")
+			pterm.Fatal.WithFatal(false).Println("Omega/FastBuilder 启动时出现错误")
 			panic(err)
 		}
 		// 判断是否正常退出
 		if err := cmd.Wait(); err == nil {
-			pterm.Success.Println("Omega/Fastbuilder 已正常退出, 启动器将结束运行")
+			pterm.Success.Println("Omega/FastBuilder 已正常退出, 启动器将结束运行")
 			return
 		}
 		// 为了避免频繁请求, 崩溃后将等待一段时间后重启, 可手动跳过等待
@@ -79,13 +79,13 @@ func Run(cfg *launcher.Config) {
 			restartTime = 0
 		}
 		// 等待输入或计时结束
-		if result, isUser := utils.GetInputYNInTime("是否需要重启 Omega/Fastbuilder?", int32(restartTime)); result {
+		if result, isUser := utils.GetInputYNInTime("是否需要重启 Omega/FastBuilder?", int32(restartTime)); result {
 			if isUser {
 				restartTime = 0
 			}
 			continue
 		}
-		pterm.Success.Println("已选择无需重启 Omega/Fastbuilder, 启动器将结束运行")
+		pterm.Success.Println("已选择无需重启 Omega/FastBuilder, 启动器将结束运行")
 		break
 	}
 }

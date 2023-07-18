@@ -8,7 +8,9 @@ import (
 )
 
 var (
-	PLANTFORM      = WINDOWS_arm64
-	OriginExecName = "omega_launcher_windows_arm64.exe"
-	CQHttpName     = "go-cqhttp_windows_arm64.exe"
+	PLANTFORM       = WINDOWS_arm64
+	launcherName    = "omega_launcher_windows_arm64.exe"
+	cqhttpName      = "go-cqhttp_windows_arm64.exe"
+	fastBuilderName = ""
+	jdkDownloadName = ""
 )

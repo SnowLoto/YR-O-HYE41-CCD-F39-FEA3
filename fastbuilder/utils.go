@@ -13,32 +13,9 @@ func GetOmegaStorageDir() string {
 	return filepath.Join(utils.GetCurrentDir(), "omega_storage")
 }
 
-// 获取FB文件名
-func GetFBExecName() string {
-	switch plantform.GetPlantform() {
-	case plantform.WINDOWS_arm64:
-		// 不存在该构建
-	case plantform.WINDOWS_x86_64:
-		return "phoenixbuilder-windows-executable-x86_64.exe"
-	case plantform.Linux_arm64:
-		return "phoenixbuilder-aarch64"
-	case plantform.Linux_x86_64:
-		return "phoenixbuilder"
-	case plantform.MACOS_arm64:
-		return "phoenixbuilder-macos-arm64"
-	case plantform.MACOS_x86_64:
-		return "phoenixbuilder-macos-x86_64"
-	case plantform.Android_arm64:
-		return "phoenixbuilder-android-termux-shared-executable-arm64"
-	case plantform.Android_x86_64:
-		return "phoenixbuilder-android-termux-shared-executable-x86_64"
-	}
-	panic("尚未支持该平台" + plantform.GetPlantform())
-}
-
 // 获取FB文件路径
 func getFBExecPath() string {
-	path := filepath.Join(utils.GetCurrentDir(), GetFBExecName())
+	path := filepath.Join(utils.GetCurrentDir(), plantform.GetFastBuilderName())
 	result, err := filepath.Abs(path)
 	if err != nil {
 		panic(err)
@@ -55,14 +32,17 @@ func getCurrentFBHash() string {
 // 获取远程仓库的Hash
 func getRemoteFBHash(url string) string {
 	// 获取文件内容
-	jsonData := utils.DownloadBytes(url + "hashes.json")
+	jsonData, err := utils.DownloadBytes(url + "hashes.json")
+	if err != nil {
+		panic(err)
+	}
 	// 解析文件内容
 	var hash string
 	hashMap := make(map[string]string, 0)
 	if err := json.Unmarshal([]byte(jsonData), &hashMap); err != nil {
 		panic(err)
 	}
-	hash = hashMap[GetFBExecName()]
+	hash = hashMap[plantform.GetFastBuilderName()]
 	if hash == "" {
 		pterm.Error.Printfln("未能从远程仓库获取 Hash")
 	}

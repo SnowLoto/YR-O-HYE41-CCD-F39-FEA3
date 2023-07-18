@@ -13,9 +13,9 @@ import (
 	"github.com/pterm/pterm"
 )
 
-// CONF, 与 INFO 相似的样式
 var (
-	IsFirstPsw  = true
+	IsFirstPsw = true
+	// CONF, 与 INFO 相似的样式
 	ConfPrinter = pterm.PrefixPrinter{
 		MessageStyle: &pterm.ThemeDefault.InfoMessageStyle,
 		Prefix: pterm.Prefix{

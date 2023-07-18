@@ -21,7 +21,7 @@ func CheckUpdate(currentVer string) {
 		return
 	}
 	// 获取原始文件名
-	execName := plantform.GetOringinExecName()
+	execName := plantform.GetLauncherName()
 	// 移除旧文件
 	utils.RemoveFile(filepath.Join(utils.GetCurrentDir(), fmt.Sprintf(".%s.old", execName)))
 	update := func() {

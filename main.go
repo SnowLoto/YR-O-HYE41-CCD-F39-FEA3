@@ -28,7 +28,7 @@ func beforeClose() {
 		// Make Contributors happy
 		debug.PrintStack()
 	}
-	if p := plantform.GetPlantform(); p == plantform.WINDOWS_x86_64 || p == plantform.WINDOWS_arm64 {
+	if p := plantform.GetPlantform(); p == plantform.WINDOWS_amd64 || p == plantform.WINDOWS_arm64 {
 		// Make Windows users happy
 		time.Sleep(time.Second * 5)
 	} else {
@@ -58,7 +58,7 @@ func main() {
 		if result, _ := utils.GetInputYNInTime("要使用和上次完全相同的配置启动吗?", 10); result {
 			// 更新FB
 			if launcherConfig.UpdateFB {
-				fastbuilder.Update(launcherConfig, false)
+				fastbuilder.Update(launcherConfig)
 			}
 			// go-cqhttp
 			if launcherConfig.EnableCQHttp && launcherConfig.StartOmega {
@@ -70,13 +70,15 @@ func main() {
 		}
 	}
 	// 配置FB更新
-	if launcherConfig.UpdateFB = utils.GetInputYN("需要启动器帮忙下载或更新 Fastbuilder 吗?"); launcherConfig.UpdateFB {
-		fastbuilder.Update(launcherConfig, true)
+	if launcherConfig.UpdateFB = utils.GetInputYN("需要启动器帮忙下载或更新 FastBuilder 吗?"); launcherConfig.UpdateFB {
+		fastbuilder.UpdateRepo(launcherConfig)
+		fastbuilder.Update(launcherConfig)
 	}
 	// 检查是否已下载FB
 	if !fastbuilder.CheckExecFile() {
-		pterm.Warning.Printfln("当前目录不存在文件名为 " + fastbuilder.GetFBExecName() + " 的 Fastbuilder")
-		fastbuilder.Update(launcherConfig, true)
+		pterm.Warning.Printfln("当前目录不存在文件名为 " + plantform.GetFastBuilderName() + " 的 FastBuilder")
+		fastbuilder.UpdateRepo(launcherConfig)
+		fastbuilder.Update(launcherConfig)
 	}
 	// 配置FB
 	fastbuilder.FBTokenSetup(launcherConfig)

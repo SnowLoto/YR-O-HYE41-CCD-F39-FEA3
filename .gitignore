@@ -4,6 +4,7 @@
 /cqhttp_storage
 /omega_storage
 /launcher_cache
+/cache
 
 # 后缀名
 /*.exe

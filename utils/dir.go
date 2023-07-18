@@ -24,7 +24,7 @@ func GetCurrentDir() string {
 func GetCurrentDataDir() string {
 	// Android环境下, 尝试将数据文件放在 /sdcard/Download
 	currentPlantform := plantform.GetPlantform()
-	if currentPlantform == plantform.Android_arm64 || currentPlantform == plantform.Android_x86_64 {
+	if currentPlantform == plantform.Android_arm64 || currentPlantform == plantform.Android_amd64 {
 		androidDownloadDir := filepath.Join("/", "sdcard", "Download")
 		if IsDir(androidDownloadDir) && MkDir(filepath.Join(androidDownloadDir, "omega_storage")) {
 			return androidDownloadDir

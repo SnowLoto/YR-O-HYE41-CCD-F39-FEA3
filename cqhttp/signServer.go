@@ -87,7 +87,10 @@ func signServerDeploy() {
 	// 缓存与下载
 	if !isCache() {
 		pterm.Warning.Printfln("正在下载 Sign Server 可执行文件..")
-		utils.DownloadFileWithMirror(remote.DownloadUrl, getDownloadFilePath())
+		err := utils.DownloadFileWithMirror(remote.DownloadUrl, getDownloadFilePath())
+		if err != nil {
+			panic(err)
+		}
 	}
 	// 解压
 	if !utils.IsDir(filepath.Join(utils.GetCacheDir(), "SignServer", remote.UnzipDirName)) {
@@ -145,7 +148,7 @@ func SignServerStart() string {
 	}
 	// 如果不是Windows则去掉.bat
 	cmdStr := filepath.Join(utils.GetCacheDir(), "SignServer", remote.UnzipDirName, "bin", "unidbg-fetch-qsign.bat")
-	if currentPlanform := plantform.GetPlantform(); currentPlanform != plantform.WINDOWS_x86_64 && currentPlanform != plantform.WINDOWS_arm64 {
+	if currentPlanform := plantform.GetPlantform(); currentPlanform != plantform.WINDOWS_amd64 && currentPlanform != plantform.WINDOWS_arm64 {
 		cmdStr = strings.TrimSuffix(cmdStr, ".bat")
 		os.Chmod(cmdStr, 0755)
 	}

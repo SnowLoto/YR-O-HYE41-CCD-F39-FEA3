@@ -8,7 +8,9 @@ import (
 )
 
 var (
-	PLANTFORM      = Android_arm64
-	OriginExecName = "omega_launcher_android_arm64"
-	CQHttpName     = "go-cqhttp_android_arm64"
+	PLANTFORM       = Android_arm64
+	launcherName    = "omega_launcher_android_arm64"
+	cqhttpName      = "go-cqhttp_android_arm64"
+	fastBuilderName = "phoenixbuilder-android-termux-shared-executable-arm64"
+	jdkDownloadName = ""
 )

@@ -8,7 +8,9 @@ import (
 )
 
 var (
-	PLANTFORM      = MACOS_arm64
-	OriginExecName = "omega_launcher_darwin_arm64"
-	CQHttpName     = "go-cqhttp_darwin_arm64"
+	PLANTFORM       = MACOS_arm64
+	launcherName    = "omega_launcher_darwin_arm64"
+	cqhttpName      = "go-cqhttp_darwin_arm64"
+	fastBuilderName = "phoenixbuilder-macos-arm64"
+	jdkDownloadName = "jdk-20_macos-aarch64_bin.tar.gz"
 )
