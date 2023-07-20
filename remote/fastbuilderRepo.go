@@ -9,7 +9,7 @@ import (
 
 var (
 	fastbuilderRepoRemoteData    []*FastbuilderRepoRemoteData
-	fastbuilderRepoRemoteDataUrl = "https://github.com/Liliya233/omega_launcher/blob/main/remote_data/config/fastbuilder_repo.json"
+	fastbuilderRepoRemoteDataUrl = "https://raw.githubusercontent.com/Liliya233/omega_launcher/main/remote_data/config/fastbuilder_repo.json"
 )
 
 type FastbuilderRepoRemoteData struct {

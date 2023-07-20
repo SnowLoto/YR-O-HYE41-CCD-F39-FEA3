@@ -9,7 +9,7 @@ import (
 
 var (
 	signServerRemoteData    *SignServerRemoteData
-	signServerRemoteDataUrl = "https://github.com/Liliya233/omega_launcher/blob/main/remote_data/config/sign_server.json"
+	signServerRemoteDataUrl = "https://raw.githubusercontent.com/Liliya233/omega_launcher/main/remote_data/config/sign_server.json"
 )
 
 type SignServerRemoteData struct {
