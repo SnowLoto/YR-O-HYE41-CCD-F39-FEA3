@@ -100,7 +100,7 @@ func DownloadBytesWithMirror(sourceUrl string) ([]byte, error) {
 	if bytes, err := DownloadBytes(sourceUrl); err == nil {
 		return bytes, nil
 	} else {
-		panic(err)
+		return nil, err
 	}
 }
 
