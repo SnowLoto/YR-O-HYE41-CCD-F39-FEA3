@@ -82,8 +82,9 @@ func UpdateRepo(cfg *launcher.Config) {
 			repos = append(repos,
 				launcher.ConfigRepo{
 					Name:         fmt.Sprintf("%v %v", data.Name, mirrorTip),
-					Url:          utils.MIRROR_URL + data.Url,
+					Url:          data.Url,
 					IsPreRelease: data.IsPreRelease,
+					UseMirror:    true,
 				},
 			)
 			tips = append(tips, fmt.Sprintf("%v. %v %v", len(tips), data.Name, mirrorTip))
@@ -95,7 +96,12 @@ func UpdateRepo(cfg *launcher.Config) {
 }
 
 // 下载FB
-func download(url string) {
+func download(useMirror bool, url string) {
+	// 镜像下载
+	if useMirror && utils.DownloadFileWithMirror(url+plantform.GetFastBuilderName(), getFBExecPath()) == nil {
+		return
+	}
+	// 普通下载
 	err := utils.DownloadFile(url+plantform.GetFastBuilderName(), getFBExecPath())
 	if err != nil {
 		panic(err)
@@ -121,6 +127,6 @@ func Update(cfg *launcher.Config) {
 		pterm.Success.Println("太好了, 你的 FastBuilder 已经是最新的了!")
 	} else {
 		pterm.Warning.Println("正在为你下载最新的 FastBuilder, 请保持耐心..")
-		download(url)
+		download(cfg.Repo.UseMirror, url)
 	}
 }

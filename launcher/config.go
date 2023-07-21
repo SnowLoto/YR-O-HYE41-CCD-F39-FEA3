@@ -10,6 +10,7 @@ type ConfigRepo struct {
 	Name         string `json:"名称"`
 	Url          string `json:"URL"`
 	IsPreRelease bool   `json:"是否预构建"`
+	UseMirror    bool   `json:"是否使用镜像"`
 }
 
 // 启动器配置文件结构

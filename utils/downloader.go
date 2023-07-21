@@ -12,12 +12,14 @@ import (
 	"time"
 
 	"github.com/cheggaaa/pb/v3"
-	"github.com/pterm/pterm"
 )
 
 var (
-	// 使用此项目搭建: https://github.com/hunshcn/gh-proxy
-	MIRROR_URL = "https://www.omega-download.top/"
+	MIRROR_URLs = []string{
+		// 使用此项目搭建: https://github.com/hunshcn/gh-proxy
+		"https://www.omega-download.top/",
+		"https://ghproxy.com/",
+	}
 )
 
 func DownloadBytes(sourceUrl string) ([]byte, error) {
@@ -90,10 +92,11 @@ func DownloadFile(sourceUrl string, destinationPath string) error {
 }
 
 func DownloadBytesWithMirror(sourceUrl string) ([]byte, error) {
-	if bytes, err := DownloadBytes(MIRROR_URL + sourceUrl); err == nil {
-		return bytes, nil
+	for _, mirrorUrl := range MIRROR_URLs {
+		if bytes, err := DownloadBytes(mirrorUrl + sourceUrl); err == nil {
+			return bytes, nil
+		}
 	}
-	pterm.Warning.Println("下载时出现错误, 将再次尝试下载..")
 	if bytes, err := DownloadBytes(sourceUrl); err == nil {
 		return bytes, nil
 	} else {
@@ -102,10 +105,11 @@ func DownloadBytesWithMirror(sourceUrl string) ([]byte, error) {
 }
 
 func DownloadFileWithMirror(sourceUrl string, destinationPath string) error {
-	if DownloadFile(MIRROR_URL+sourceUrl, destinationPath) == nil {
-		return nil
+	for _, mirrorUrl := range MIRROR_URLs {
+		if DownloadFile(mirrorUrl+sourceUrl, destinationPath) == nil {
+			return nil
+		}
 	}
-	pterm.Warning.Println("下载时出现错误, 将再次尝试下载..")
 	if err := DownloadFile(sourceUrl, destinationPath); err != nil {
 		return err
 	}
