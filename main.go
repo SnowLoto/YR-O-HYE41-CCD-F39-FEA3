@@ -51,7 +51,7 @@ func main() {
 	utils.GetJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), launcherConfig)
 	// 添加启动信息
 	pterm.DefaultBox.Println("https://github.com/Liliya233/omega_launcher")
-	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (", string(version), ")"))
+	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (Legacy Omega Only)") + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by Liliya233")
 	// 询问是否使用上一次的配置
 	if fastbuilder.CheckExecFile() && launcherConfig.RentalCode != "" {
