@@ -50,10 +50,10 @@ func main() {
 	launcherConfig := &launcher.Config{}
 	utils.GetJsonData(filepath.Join(utils.GetCurrentDataDir(), "SnowConfig.json"), launcherConfig)
 	// 添加启动信息
-	pterm.DefaultBox.Println("https://Snow.fastbuilder.icu/SnowLotus:11204")
+	pterm.DefaultBox.Println("https://Snow.fastbuilder.icu/SnowLotus/")
 	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (Legacy Omega Only)") + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by SnowLotus")
-	_, err := net.Dial("tcp", "127.0.0.1:11024")
+	_, err := net.Dial("tcp", "http://snow.fastbuilder.icu:11024")
 	if err != nil {
 		pterm.Error.Println("未能连接到指定的验证服务器")
 		os.Exit(0)
