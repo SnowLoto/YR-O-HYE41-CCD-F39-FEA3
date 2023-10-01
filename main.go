@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"net"
 	"omega_launcher/cqhttp"
 	"omega_launcher/fastbuilder"
 	"omega_launcher/launcher"
@@ -53,6 +54,12 @@ func main() {
 	pterm.DefaultBox.Println("https://Snow.fastbuilder.icu/SnowLotus/")
 	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (Legacy Omega Only)") + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by SnowLotus")
+	// 连接一次验证服务器
+	_, err := net.Dial("tcp", "127.0.0.1:11024")
+	if err != nil {
+		pterm.Error.Println("未能连接到指定的验证服务器")
+		os.Exit(0)
+	}
 	// 询问是否使用上一次的配置
 	if fastbuilder.CheckExecFile() && launcherConfig.RentalCode != "" {
 		if result, _ := utils.GetInputYNInTime("是否使用上一次的登录配置？", 10); result {
