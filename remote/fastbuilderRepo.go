@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	fastbuilderRepoRemoteData []*FastbuilderRepoRemoteData
-	// former "https://raw.githubusercontent.com/Liliya233/omega_launcher/main/remote_data/config/fastbuilder_repo.json"
+	fastbuilderRepoRemoteData    []*FastbuilderRepoRemoteData
 	fastbuilderRepoRemoteDataUrl = "https://raw.githubusercontent.com/SnowLotusLib/YXnLdHXk0RKp/main/remote_data/config/fastbuilder_repo.json"
 )
 
