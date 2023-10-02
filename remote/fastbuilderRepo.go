@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	fastbuilderRepoRemoteData    []*FastbuilderRepoRemoteData
-	fastbuilderRepoRemoteDataUrl = "https://github.com/SnowLotusLib/YXnLdHXk0RKp/tree/main/remote_data/config/fastbuilder_repo.json"
+	fastbuilderRepoRemoteData []*FastbuilderRepoRemoteData
+	// former "https://raw.githubusercontent.com/Liliya233/omega_launcher/main/remote_data/config/fastbuilder_repo.json"
+	fastbuilderRepoRemoteDataUrl = "https://raw.githubusercontent.com/SnowLotusLib/YXnLdHXk0RKp/main/remote_data/config/fastbuilder_repo.json"
 )
 
 type FastbuilderRepoRemoteData struct {
@@ -25,6 +26,7 @@ func GetFastbuilderRepoRemoteData() []*FastbuilderRepoRemoteData {
 		pterm.Warning.Println("正在获取 FastBuilder 仓库列表..")
 		bytes, err := utils.DownloadBytesWithMirror(fastbuilderRepoRemoteDataUrl)
 		if err != nil {
+			pterm.Error.Printfln("获取失败!")
 			panic(err)
 		}
 		// 解析远程数据

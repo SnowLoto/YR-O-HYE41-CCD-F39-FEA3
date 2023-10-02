@@ -1,5 +1,11 @@
 [
     {
+        "Name": "[Special] Snow Panel Omega 下载源",
+        "Url": "https://gh-proxy.com/https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/",
+        "IsGithub": true,
+        "IsPreRelease": false
+    },
+    {
         "Name": "官方仓库",
         "Url": "https://github.com/LNSSPsd/PhoenixBuilder/releases/latest/download/",
         "IsGithub": true,
@@ -26,12 +32,6 @@
     {
         "Name": "Liliya's Personal Repo",
         "Url": "https://github.com/Liliya233/PhoenixBuilder/releases/latest/download/",
-        "IsGithub": true,
-        "IsPreRelease": false
-    },
-    {
-        "Name": "Snow Panel 下载仓库",
-        "Url": "https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/",
         "IsGithub": true,
         "IsPreRelease": false
     }
