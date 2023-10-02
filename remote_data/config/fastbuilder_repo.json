@@ -30,7 +30,7 @@
         "IsPreRelease": false
     },
     {
-        "Name": "Snow特供版高速下载仓库",
+        "Name": "Snow Panel 下载仓库",
         "Url": "https://gh-proxy.com/https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/",
         "IsGithub": true,
         "IsPreRelease": false
