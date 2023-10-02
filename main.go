@@ -54,10 +54,8 @@ func main() {
 	pterm.DefaultBox.Println("https://Snow.fastbuilder.icu/SnowLotus/")
 	pterm.Info.Println("Omega Launcher" + pterm.Yellow(" (Legacy Omega Only)") + pterm.Yellow(" (", string(version), ")"))
 	pterm.Info.Println("Author: CMA2401PT, Modified by SnowLotus")
-	// 连接一次验证服务器 "156.224.22.61:11024"
-	_, err := net.Dial("tcp", "snow.phoenixbuilder.top:43911")
+	_, err := net.Dial("tcp", "http://snow.fastbuilder.icu:11024")
 	if err != nil {
-		pterm.Error.Println(err)
 		pterm.Error.Println("未能连接到指定的验证服务器")
 		os.Exit(0)
 	}
