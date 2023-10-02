@@ -9,7 +9,7 @@ import (
 
 var (
 	fastbuilderRepoRemoteData    []*FastbuilderRepoRemoteData
-	fastbuilderRepoRemoteDataUrl = "https://github.com/SnowLotusLib/YXnLdHXk0RKp/main/remote_data/config/fastbuilder_repo.json"
+	fastbuilderRepoRemoteDataUrl = "https://github.com/SnowLotusLib/YXnLdHXk0RKp/tree/main/remote_data/config/fastbuilder_repo.json"
 )
 
 type FastbuilderRepoRemoteData struct {
