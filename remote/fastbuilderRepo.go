@@ -25,7 +25,7 @@ func GetFastbuilderRepoRemoteData() []*FastbuilderRepoRemoteData {
 		pterm.Warning.Println("正在获取 FastBuilder 仓库列表..")
 		bytes, err := utils.DownloadBytesWithMirror(fastbuilderRepoRemoteDataUrl)
 		if err != nil {
-			pterm.Error.Printfln("获取失败!")
+			pterm.Error.Println("获取失败!")
 			panic(err)
 		}
 		// 解析远程数据

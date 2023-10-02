@@ -1,13 +1,13 @@
 [
     {
         "Name": "[Special] Snow Panel Omega 下载源(国内)",
-        "Url": "https://gh-proxy.com/https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/",
+        "Url": "https://gh-proxy.com/https://github.com/rnhws-Team/ToolDelta-PhoenixBuilder/releases/latest/download/",
         "IsGithub": true,
         "IsPreRelease": false
     },
     {
         "Name": "[Special] Snow Panel Omega 下载源(GitHub)",
-        "Url": "https://github.com/rnhws-Team/PhoenixBuilder/releases/latest/download/",
+        "Url": "https://github.com/rnhws-Team/ToolDelta-PhoenixBuilder/releases/latest/download/",
         "IsGithub": true,
         "IsPreRelease": false
     },
