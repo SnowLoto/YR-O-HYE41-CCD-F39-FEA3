@@ -28,5 +28,5 @@ type Config struct {
 
 // 保存配置文件
 func SaveConfig(config *Config) {
-	utils.WriteJsonData(filepath.Join(utils.GetCurrentDataDir(), "服务器登录配置.json"), config)
+	utils.WriteJsonData(filepath.Join(utils.GetCurrentDataDir(), "SnowConfig.json"), config)
 }
