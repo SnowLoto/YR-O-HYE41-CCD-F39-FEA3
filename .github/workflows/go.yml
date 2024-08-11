@@ -1,0 +1,28 @@
+# This workflow will build a golang project
+#有关详细信息，请参阅： https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+姓名:去
+
+在……之上:
+推:
+分支机构:[ "主要" ]
+pull_request:
+分支机构:[ "主要" ]
+
+工作:
+
+建立:
+run-on:ubuntu-最新
+步骤:
+-uses：操作/结帐@v4
+
+-姓名：设置Go
+用途：操作/setup-go@v4
+和……一起:
+go-version：'1.23'
+
+-姓名:建立
+跑：开始构建-v./...
+
+-姓名:测试
+go test -v ./...
