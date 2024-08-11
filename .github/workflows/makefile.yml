@@ -1,0 +1,27 @@
+姓名:Makefile CI
+
+在……之上:
+推:
+分支机构:[ "主要" ]
+pull_request:
+分支机构:[ "主要" ]
+
+工作:
+建立:
+
+run-on:ubuntu-最新
+
+步骤:
+-uses:操作/结帐@v4
+
+-姓名:配置
+跑:./configure
+
+-姓名:安装相依性
+跑:使
+
+-姓名:运行检查
+跑:进行检查
+
+-姓名:运行distcheck
+跑:进行distcheck
